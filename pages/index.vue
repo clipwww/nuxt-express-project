@@ -1,21 +1,6 @@
 <template>
   <section class="container">
     <img src="~assets/img/logo.png" alt="Nuxt.js Logo" class="logo" />
-    <h1 class="title">
-      USERS
-    </h1>
-    <ul class="users">
-      <li v-for="(user, index) in users" :key="index" class="user">
-        <nuxt-link :to="{ name: 'id', params: { id: index }}">
-          {{ user.name }}
-        </nuxt-link>
-      </li>
-      <li>
-        <nuxt-link to="/admin">
-          Admin
-        </nuxt-link>
-      </li>
-    </ul>
     <el-button @click="$store.commit('increment')">默認按鈕</el-button><br/>
     <img src="/S__20168849.jpg" alt="pepe" class="pepe"/>
   </section>
@@ -26,8 +11,8 @@ import axios from '~/plugins/axios'
 
 export default {
   async asyncData () {
-    let { data } = await axios.get('/api/users')
-    return { users: data }
+    // let { data } = await axios.get('/api/users')
+    // return { users: data }
   },
   head () {
     return {

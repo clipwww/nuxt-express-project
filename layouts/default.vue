@@ -51,4 +51,12 @@ export default {
   font-size: 2.5em;
   margin: 0;
 }
+
+.page-enter-active, .page-leave-active {
+  transition: all .5s // cubic-bezier(.47,1.28,.81,1.29);
+}
+.page-enter, .page-leave-to /* .fade-leave-active in below version 2.1.8 */ {
+  transform: scale(0);
+  opacity: 0;
+}
 </style>
