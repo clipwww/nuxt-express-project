@@ -1,5 +1,5 @@
 {
-  "name": "komica reader",
+  "name": "komica_reader",
   "version": "1.2.1",
   "description": "Komica Reader v4 (Nuxt.js + express.js version)",
   "author": "David,jian <clipwww@gmail.com>",
