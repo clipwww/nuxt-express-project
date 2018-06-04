@@ -1,6 +1,6 @@
 export default {
   komica:{
-    live: "http://2cat.or.tl/~tedc21thc/live/",
-    new: "http://2cat.or.tl/~tedc21thc/new"
+    live: "http://2cat.cf/~tedc21thc/live",
+    new: "http://2cat.cf/~tedc21thc/new"
   }
 }

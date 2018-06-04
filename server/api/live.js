@@ -32,38 +32,14 @@ const getPostData = ($el) => {
 
 }
 
-const links = [
-  "index.html",
-  "1.htm",
-  "2.htm",
-  "3.htm",
-  "4.htm",
-  "pixmicat.php?page_num=5",
-  "pixmicat.php?page_num=6",
-  "pixmicat.php?page_num=7"
-]
-
-
-router.get("/komica/live/:id", async (req, res, next)=>{
-  const id = parseInt(req.params.id);
-
-  if(id < 0 || id > 7){
-    res.sendStatus(404);
-  }
-
-  const link = links[id];
-
+const request = async (link, isIndex = true) => {
+  console.log('link：', link)
   let apiJsonData = await axios.get(`${apiUrl.komica.live}/${link}`, (res) => {
     return res.data;
   });
 
   let postData = [];
   let $html = $(apiJsonData.data);
-
-  let pages = [];
-  $html.find("#page_switch").find("a").each((i, el) => {
-    pages.push($(el).attr("href"));
-  });
 
   $html.find('.threadpost').each((i, el) => {
     let $el = $(el);
@@ -84,10 +60,28 @@ router.get("/komica/live/:id", async (req, res, next)=>{
     postData.push(temp)
   });
 
+  let pages = [];
+  if(isIndex) {
+    $html.find("#page_switch").find("a").each((i, el) => {
+      pages.push($(el).attr("href"));
+    });
+  }
+
+  for(let i=0; i < pages.length; i++) {
+    postData.push(...await request(pages[i], false))
+  }
+
+  
+  return postData;
+}
+  
+
+
+router.get("/komica/live", async (req, res, next)=>{
+ 
   res.json({
     success: true,
-    data: postData,
-    pages,
+    data: await request('index.html'),
   });
 })
 

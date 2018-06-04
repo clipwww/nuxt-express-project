@@ -6,28 +6,26 @@
 </template>
 
 <script>
-import MyFooter from '~/components/Footer.vue'
+import MyFooter from '~/components/Footer.vue';
 
 export default {
   components: {
-    MyFooter
-  }
-}
+    MyFooter,
+  },
+};
 </script>
 
 <style lang="scss">
-@import "../assets/scss/varibles.scss";
-.container
-{
+@import '../assets/scss/varibles.scss';
+.container {
   margin: 0;
   width: 100%;
   padding: 100px 15px;
   text-align: center;
-
 }
 
-.button, .button:visited
-{
+.button,
+.button:visited {
   display: inline-block;
   color: black;
   letter-spacing: 1px;
@@ -38,25 +36,25 @@ export default {
   padding: 15px 45px;
 }
 
-.button:hover, .button:focus
-{
+.button:hover,
+.button:focus {
   color: #fff;
   background-color: #000;
 }
 
-.title
-{
+.title {
   color: #000;
   font-weight: 300;
   font-size: 2.5em;
   margin: 0;
 }
 
-.page-enter-active, .page-leave-active {
-  transition: all .5s // cubic-bezier(.47,1.28,.81,1.29);
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.5s; // cubic-bezier(.47,1.28,.81,1.29);
 }
 .page-enter, .page-leave-to /* .fade-leave-active in below version 2.1.8 */ {
-  transform: scale(0);
+  transform: scale(2);
   opacity: 0;
 }
 </style>
