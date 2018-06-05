@@ -18,13 +18,20 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ['element-ui/lib/theme-chalk/index.css', '~/assets/css/main.css'],
-  plugins: ['plugins/element-ui'],
+  css: [
+    'material-design-icons-iconfont/dist/material-design-icons.css',
+    'vuetify/dist/vuetify.min.css',
+    '~/assets/css/main.css',
+  ],
+  plugins: ['plugins/vuetify'],
   router: {
-    middleware: 'states',
+    middleware: 'global',
   },
   build: {
-    vendor: ['axios'],
+    styleResources: {
+      scss: ['./assets/scss/variables.scss', './assets/scss/mixin.scss'],
+    },
+    vendor: ['babel-polyfill', 'axios'],
 
     postcss: [
       require('autoprefixer')({

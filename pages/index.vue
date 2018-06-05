@@ -1,20 +1,15 @@
 <template lang="pug">
-  section(class="container")
+  section()
     div()
       img(src="/S__20168849.jpg" alt="pepe" class="pepe" width="200")
-    el-table(:data="posts"
-      v-loading="isLoading"
-      element-loading-text="拼命加載中"
-      element-loading-spinner="el-icon-loading"
-      element-loading-background="rgba(0, 0, 0, 0.8)"
-      border
-      stripe
-      highlight-current-row
-      row-key="id")
-      el-table-column(prop="title" label="標題")
-      el-table-column(prop="name" label="名稱")
-      el-table-column(prop="userId" label="使用者ID")
-      el-table-column(prop="dateTime" label="日期&時間")
+
+      v-data-table(class="elevation-2" :headers="headers" :items="posts" :loading="isLoading" hide-actions disable-initial-sort)
+        template(slot="items" slot-scope="props")
+          td {{ props.item.title }}
+          td
+            img(:src="props.item.sImg" style="max-width: 100px;")
+          td {{ props.item.userId }}
+          td {{ props.item.dateTime }}
 
 
 </template>
@@ -38,6 +33,13 @@ export default {
     return {
       posts: [],
       isLoading: true,
+
+      headers: [
+        { text: '標題', value: 'title', align: 'center', sortable: false },
+        { text: '開版圖', value: 'sImg', align: 'center', sortable: false },
+        { text: '使用者ID', value: 'userId', align: 'center', sortable: false },
+        { text: '日期&時間', value: 'dateTime', align: 'center', sortable: false },
+      ],
     };
   },
   methods: {},
