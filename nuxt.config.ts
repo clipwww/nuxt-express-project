@@ -1,4 +1,6 @@
-module.exports = {
+import server from './server';
+
+export default {
   /*
   ** Headers of the page
   */
@@ -23,21 +25,31 @@ module.exports = {
     'vuetify/dist/vuetify.min.css',
     '~/assets/css/main.css',
   ],
+
   plugins: ['plugins/vuetify'],
+
+  modules: [
+    '@nuxtjs/style-resources'
+  ],
+
   router: {
     middleware: 'global',
   },
-  build: {
-    styleResources: {
-      scss: ['./assets/scss/variables.scss', './assets/scss/mixin.scss'],
-    },
-    vendor: ['babel-polyfill', 'axios'],
 
+  styleResources: {
+    scss: ['./assets/scss/variables.scss', './assets/scss/mixin.scss'],
+  },
+
+  serverMiddleware: [
+    server
+  ],
+
+  build: {
     postcss: [
       require('autoprefixer')({
         browsers: ['last 5 version', 'iOS >=8', 'Safari >=8'],
       }),
     ],
-    extend(config, ctx) {},
+    // extend(config, ctx) { },
   },
 };
