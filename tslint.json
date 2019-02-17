@@ -1,9 +1,14 @@
 {
-  "defaultSeverity": "error",
+  "defaultSeverity": "warn",
   "extends": [
     "tslint-config-standard"
   ],
   "rules": {
-    "prefer-const": true
+    "prefer-const": true,
+    "semicolon": true,
+    "quotemark": [
+      true,
+      "single"
+    ]
   }
 }

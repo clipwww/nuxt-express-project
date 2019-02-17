@@ -3,5 +3,6 @@
   "editor.formatOnSave": true,
   "typescript.tsdk": "node_modules/typescript/bin",
   "typescript.referencesCodeLens.enabled": true,
-  "typescript.implementationsCodeLens.enabled": true
+  "typescript.implementationsCodeLens.enabled": true,
+  "vetur.format.defaultFormatter.js": "vscode-typescript"
 }

@@ -4,4 +4,4 @@ export default {
     live: 'https://2cat.komica.org/~tedc21thc/live',
     new: 'https://2cat.komica.org/~tedc21thc/new'
   }
-}
+};

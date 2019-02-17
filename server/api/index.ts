@@ -1,9 +1,9 @@
-import { Router } from 'express'
-import live from './live'
+import { Router } from 'express';
+import live from './live';
 
-const router = Router()
+const router = Router();
 
 // Add USERS Routes
-router.use(live)
+router.use(live);
 
-export default router
+export default router;

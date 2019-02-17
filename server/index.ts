@@ -1,11 +1,11 @@
-import express from 'express'
-import api from './api'
+import express from 'express';
+import api from './api';
 
-process.env.DEBUG = 'nuxt:*'
+process.env.DEBUG = 'nuxt:*';
 
-const app = express()
+const app = express();
 
 // Import API Routes
-app.use('/api', api)
+app.use('/api', api);
 
-export default app
+export default app;

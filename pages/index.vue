@@ -26,7 +26,7 @@ export default {
   // },
   head() {
     return {
-      title: "Users"
+      title: 'Users'
     };
   },
   data() {
@@ -35,13 +35,13 @@ export default {
       isLoading: true,
 
       headers: [
-        { text: "標題", value: "title", align: "center", sortable: false },
-        { text: "開版圖", value: "sImg", align: "center", sortable: false },
-        { text: "使用者ID", value: "userId", align: "center", sortable: false },
+        { text: '標題', value: 'title', align: 'center', sortable: false },
+        { text: '開版圖', value: 'sImg', align: 'center', sortable: false },
+        { text: '使用者ID', value: 'userId', align: 'center', sortable: false },
         {
-          text: "日期&時間",
-          value: "dateTime",
-          align: "center",
+          text: '日期&時間',
+          value: 'dateTime',
+          align: 'center',
           sortable: false
         }
       ]
@@ -50,7 +50,7 @@ export default {
   methods: {},
   async created() {
     this.isLoading = true;
-    const ret = await axios.get("/api/komica/live").then(res => res.data);
+    const ret = await axios.get('/api/komica/live').then(res => res.data);
     this.isLoading = false;
     console.log(ret);
     this.posts = [...ret.data];
