@@ -9,7 +9,7 @@ export default {
   asyncData(context) {
     console.log(context.isClient);
     return {
-      name: 'YOOOO'
+      name: 'YOOOO',
     };
   },
   fetch() {
@@ -23,7 +23,7 @@ export default {
   validate(content) {
     console.log(content);
     return true;
-  }
+  },
 };
 </script>
 

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import axios from "~/plugins/axios";
+import axios from '~/plugins/axios';
 
 export default {
   // async asyncData() {
@@ -26,7 +26,7 @@ export default {
   // },
   head() {
     return {
-      title: 'Users'
+      title: 'Users',
     };
   },
   data() {
@@ -42,9 +42,9 @@ export default {
           text: '日期&時間',
           value: 'dateTime',
           align: 'center',
-          sortable: false
-        }
-      ]
+          sortable: false,
+        },
+      ],
     };
   },
   methods: {},
@@ -54,7 +54,7 @@ export default {
     this.isLoading = false;
     console.log(ret);
     this.posts = [...ret.data];
-  }
+  },
 };
 </script>
 
