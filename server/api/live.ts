@@ -1,31 +1,18 @@
 import { Router } from 'express';
-import apiUrl from '../util/apiUrl';
+import { NSKomica } from '../../view-models/komica.vm';
 import axios from 'axios';
 import $ from 'cheerio';
 
-interface IPostData {
-  id: string;
-  title: string | null;
-  text: string | null;
-  oImg: string;
-  sImg: string;
-  name: string;
-  dateTime: string;
-  userId: string;
-  warnText: string | null;
-  reply: IPostData[];
-}
-
 const router = Router();
 
-const getPostData = ($el: Cheerio): IPostData => {
+const getPostData = ($el: Cheerio): NSKomica.IPostData => {
   const id = $el.attr('id').replace('r', '');
   const title = $el.find('.title').text();
   const text = $el.find('.quote').html();
   const oImg = $el.find('a[href*=\'img\']').attr('href')
-    ? `${apiUrl.komica.domain}${$el.find('a[href*=\'img\']').attr('href')}`
+    ? `${NSKomica.config.domain}${$el.find('a[href*=\'img\']').attr('href')}`
     : '';
-  const sImg = $el.find('img.img').attr('src') ? `${apiUrl.komica.domain}${$el.find('img.img').attr('src')}` : '';
+  const sImg = $el.find('img.img').attr('src') ? `${NSKomica.config.domain}${$el.find('img.img').attr('src')}` : '';
   const name = $el.find('.name').text();
   const label = $el
     .find(`label[for="${id}"]`)
@@ -49,9 +36,9 @@ const getPostData = ($el: Cheerio): IPostData => {
   };
 };
 
-const request = async (link: string, isIndex = true): Promise<IPostData[]> => {
+const request = async (link: string, isIndex = true): Promise<NSKomica.IPostData[]> => {
   console.log('link：', link);
-  const apiJsonData: string = await axios.get(`${apiUrl.komica.live}/${link}`).then(res => res.data);
+  const apiJsonData: string = await axios.get(`${NSKomica.config.live}/${link}`).then(res => res.data);
 
   const postData = [];
   const $html = $(apiJsonData);
@@ -59,7 +46,7 @@ const request = async (link: string, isIndex = true): Promise<IPostData[]> => {
   $html.find('.threadpost').each((_i, el) => {
     const $el = $(el);
     const temp = getPostData($el);
-    const reply: IPostData[] = [];
+    const reply: NSKomica.IPostData[] = [];
 
     $html.find('.reply').each((_i, rEl) => {
       const $rEl = $(rEl);

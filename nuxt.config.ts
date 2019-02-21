@@ -1,6 +1,7 @@
 import server from './server';
 
 export default {
+  mode: 'spa',
   /*
   ** Headers of the page
   */

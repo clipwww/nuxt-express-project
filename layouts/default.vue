@@ -10,15 +10,13 @@
     v-footer(app inset)
 </template>
 
-<script>
-export default {
-  components: {},
-  data() {
-    return {
-      drawer: true,
-    };
-  },
-};
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component
+export default class DefaultLayout extends Vue {
+  drawer: boolean = false;
+}
 </script>
 
 <style lang="scss">

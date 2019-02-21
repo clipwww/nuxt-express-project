@@ -6,10 +6,17 @@
     <nuxt-link class="button" to="/" v-if="error.statusCode === 404">Homepage</nuxt-link>
   </section>
 </template>
-<script>
-export default {
-  props: ['error'],
-};
+
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator';
+
+@Component
+export default class ErrorLayout extends Vue {
+  @Prop() error!: {
+    statusCode: number;
+    message: string;
+  };
+}
 </script>
 
 <style scoped>

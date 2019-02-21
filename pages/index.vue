@@ -14,48 +14,36 @@
 
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
 import axios from '~/plugins/axios';
+import { NSKomica } from '~/view-models/komica.vm';
 
-export default {
-  // async asyncData() {
-  //   let { data: posts } = await axios.get('/api/komica/live');
-  //   return {
-  //     posts,
-  //   };
-  // },
+@Component({
   head() {
     return {
       title: 'Users',
     };
   },
-  data() {
-    return {
-      posts: [],
-      isLoading: true,
+})
+export default class IndexPage extends Vue {
+  posts: NSKomica.IPostData[] = [];
+  isLoading: boolean = false;
 
-      headers: [
-        { text: '標題', value: 'title', align: 'center', sortable: false },
-        { text: '開版圖', value: 'sImg', align: 'center', sortable: false },
-        { text: '使用者ID', value: 'userId', align: 'center', sortable: false },
-        {
-          text: '日期&時間',
-          value: 'dateTime',
-          align: 'center',
-          sortable: false,
-        },
-      ],
-    };
-  },
-  methods: {},
+  headers = [
+    { text: '標題', value: 'title', align: 'center', sortable: false },
+    { text: '開版圖', value: 'sImg', align: 'center', sortable: false },
+    { text: '日期&時間', value: 'dateTime', align: 'center', sortable: false },
+  ];
+
   async created() {
     this.isLoading = true;
     const ret = await axios.get('/api/komica/live').then(res => res.data);
     this.isLoading = false;
     console.log(ret);
     this.posts = [...ret.data];
-  },
-};
+  }
+}
 </script>
 
 <style lang="scss" scoped>
