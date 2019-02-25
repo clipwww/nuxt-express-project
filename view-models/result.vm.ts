@@ -1,3 +1,8 @@
+export enum ResultCode {
+  success = '200',
+  error = '500'
+}
+
 export class ResultVM {
   success: boolean;
   resultCode: string;
@@ -9,8 +14,8 @@ export class ResultVM {
     this.resultMessage = '';
   }
 
-  setResultValue(success?: boolean, resultCode?: string, resultMessage?: string): ResultVM;
-  setResultValue(): ResultVM {
+  setResultValue(success?: boolean, resultCode?: string, resultMessage?: string): any;
+  setResultValue(): any {
     this.success = arguments[0] === undefined ? false : arguments[0];
     this.resultMessage = arguments[2] === undefined ? '' : arguments[2];
 

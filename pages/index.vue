@@ -16,8 +16,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import axios from '~/plugins/axios';
-import { NSKomica } from '~/view-models/komica.vm';
+import { komicaSVC } from '~/utilities/service';
+import { NSKomica } from '~/utilities/komica.util';
 
 @Component({
   head() {
@@ -33,15 +33,16 @@ export default class IndexPage extends Vue {
   headers = [
     { text: '標題', value: 'title', align: 'center', sortable: false },
     { text: '開版圖', value: 'sImg', align: 'center', sortable: false },
+    { text: 'Id', value: 'userId', align: 'center', sortable: false },
     { text: '日期&時間', value: 'dateTime', align: 'center', sortable: false },
   ];
 
   async created() {
     this.isLoading = true;
-    const ret = await axios.get('/api/komica/live').then(res => res.data);
+    const ret = await komicaSVC.getLiveList(1);
     this.isLoading = false;
     console.log(ret);
-    this.posts = [...ret.data];
+    this.posts = [...ret.items];
   }
 }
 </script>

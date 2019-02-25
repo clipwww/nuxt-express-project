@@ -1,6 +1,11 @@
 <template lang="pug">
   v-app(dark)
     v-navigation-drawer(v-model="drawer" app fixed floating)
+      v-list-group(prepend-icon="grade")
+        v-list-tile(slot="activator")
+          v-list-tile-title Komica
+
+
     v-toolbar(app fixed)
       v-toolbar-side-icon(@click.stop="drawer = !drawer")
       v-toolbar-title Application

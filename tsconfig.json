@@ -1,4 +1,5 @@
 {
+  "defaultSeverity": "warning",
   "extends": "@nuxt/typescript",
   "compilerOptions": {
     "baseUrl": ".",
@@ -6,6 +7,11 @@
       "@types/node",
       "@nuxt/vue-app"
     ],
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "paths": {
+      "~/*": [
+        "./*"
+      ]
+    }
   },
 }

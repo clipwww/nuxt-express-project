@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import live from './live';
+import komica from './komica';
 
 const router = Router();
 
 // Add USERS Routes
-router.use(live);
+router.use('/komica', komica);
 
 export default router;
