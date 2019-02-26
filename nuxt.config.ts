@@ -24,8 +24,10 @@ export default {
   css: [
     'material-design-icons-iconfont/dist/material-design-icons.css',
     'vuetify/dist/vuetify.min.css',
-    '~/assets/css/main.css'
+    '~/assets/scss/main.scss'
   ],
+
+  loading: '~/components/Loading.vue',
 
   plugins: ['plugins/vuetify'],
 

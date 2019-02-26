@@ -32,7 +32,7 @@ export namespace NSKomica {
     id: string;
     title: string;
     text: string;
-    mail: string;
+    email: string;
     oImg: string;
     sImg: string;
     name: string;
@@ -46,7 +46,7 @@ export namespace NSKomica {
     const id = $el.attr('id').replace('r', '') || '';
     const title = $el.find('.title').text() || '';
     const text = $el.find('.quote').html() || '';
-    const mail = deCodeMailProtection($el.find('a[href*="email"]').attr('href'));
+    const email = deCodeMailProtection($el.find('a[href*="email"]').attr('href'));
     const oImg = $el.find('a[href*=\'src\']').attr('href')
       ? `${config.domain}${$el.find('a[href*=\'src\']').attr('href')}`
       : '';
@@ -63,8 +63,8 @@ export namespace NSKomica {
     return {
       id,
       title,
-      text,
-      mail,
+      text: text.replace(/onclick/g, str => `__${str}`),
+      email,
       oImg,
       sImg,
       name,

@@ -28,7 +28,7 @@
     "nuxt-ts": "v2.4.3",
     "source-map-support": "^0.4.15",
     "vue-property-decorator": "^7.3.0",
-    "vuetify": "^1.0.18",
+    "vuetify": "^1.5.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {

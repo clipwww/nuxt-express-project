@@ -17,4 +17,14 @@ export class KomicaSVC extends BaseSVC {
     });
     return ret.data;
   }
+
+  /**
+   * [GET] /api/komica/live/:id
+   * 取得新番實況文章Details
+   * @param {string} id 文章id
+   */
+  async getLiveDetails(id: string) {
+    const ret = await this.axiosInstance.get<NSKomica.DetailsResultVM>(`${this.baseURL}/live/${id}`);
+    return ret.data;
+  }
 }
