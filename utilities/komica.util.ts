@@ -6,7 +6,7 @@ export namespace NSKomica {
   export const config = {
     domain: 'http://2cat.komica.org',
     live: 'https://2cat.komica.org/~tedc21thc/live/pixmicat.php',
-    new: 'https://2cat.komica.org/~tedc21thc/new/pixmicat.php'
+    new: 'https://2cat.komica.org/~tedc21thc/new/pixmicat.php',
   };
 
   export type boardType = 'live' | 'new';
@@ -99,72 +99,80 @@ export namespace NSKomica {
   };
 
   export const getKomicaListResult = async (type: boardType, page: number = 1): Promise<ListResultVM> => {
-
     const result = new ListResultVM();
 
-    const { data: htmlString } = await axios.get<string>(config[type], {
-      params: {
-        page_num: page,
-      }
-    });
+    try {
 
-    const postDatas: IPostData[] = [];
-    const $html = $(htmlString);
-
-    $html.find('.threadpost').each((_i, el) => {
-      const $el = $(el);
-      const temp = getPostData($el);
-      const reply: IPostData[] = [];
-
-      $html.find('.reply').each((_i, rEl) => {
-        const $rEl = $(rEl);
-
-        if ($rEl.find(`.qlink[href*="res=${temp.id}"]`).length > 0) {
-          const temp2 = getPostData($rEl);
-          reply.push(temp2);
+      const { data: htmlString } = await axios.get<string>(config[type], {
+        params: {
+          page_num: page,
         }
       });
 
-      temp.reply = reply;
+      const postDatas: IPostData[] = [];
+      const $html = $(htmlString);
 
-      postDatas.push(temp);
-    });
+      $html.find('.threadpost').each((_i, el) => {
+        const $el = $(el);
+        const temp = getPostData($el);
+        const reply: IPostData[] = [];
 
-    const pages: string[] = [];
-    $html
-      .find('#page_switch')
-      .find('a')
-      .each((_i, el) => {
-        pages.push($(el).attr('href'));
+        $html.find('.reply').each((_i, rEl) => {
+          const $rEl = $(rEl);
+
+          if ($rEl.find(`.qlink[href*="res=${temp.id}"]`).length > 0) {
+            const temp2 = getPostData($rEl);
+            reply.push(temp2);
+          }
+        });
+
+        temp.reply = reply;
+
+        postDatas.push(temp);
       });
 
-    result.items = postDatas;
-    result.pages = pages;
+      const pages: string[] = [];
+      $html
+        .find('#page_switch')
+        .find('a')
+        .each((_i, el) => {
+          pages.push($(el).attr('href'));
+        });
 
-    return result.setResultValue(true, ResultCode.success);
+      result.items = postDatas;
+      result.pages = pages;
+
+      return result.setResultValue(true, ResultCode.success);
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
   };
 
   export const getKomicaDetailsResult = async (type: boardType, resId: string): Promise<DetailsResultVM> => {
 
     const result = new DetailsResultVM();
 
-    const { data: htmlString } = await axios.get<string>(config[type], {
-      params: {
-        res: resId,
-      }
-    });
+    try {
+      const { data: htmlString } = await axios.get<string>(config[type], {
+        params: {
+          res: resId,
+        }
+      });
 
-    const $html = $(htmlString);
-    const postData: IPostData = getPostData($html.find('.threadpost'));
+      const $html = $(htmlString);
+      const postData: IPostData = getPostData($html.find('.threadpost'));
 
-    $html.find('.reply').each((_i, rEl) => {
-      const $rEl = $(rEl);
+      $html.find('.reply').each((_i, rEl) => {
+        const $rEl = $(rEl);
 
-      postData.reply.push(getPostData($rEl));
-    });
+        postData.reply.push(getPostData($rEl));
+      });
 
-    result.item = postData;
+      result.item = postData;
 
-    return result.setResultValue(true, ResultCode.success);
+      return result.setResultValue(true, ResultCode.success);
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
   };
 }

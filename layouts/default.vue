@@ -1,21 +1,17 @@
 <template lang="pug">
   v-app(dark)
-    v-navigation-drawer(v-model="drawer" class="elevation-5" app fixed floating)
-      v-list
-        v-list-tile(@click="$router.push('/')")
-          v-list-tile-action
-            v-icon home
-          v-list-tile-title 首頁
-        v-list-group(prepend-icon="grade")
-          v-list-tile(slot="activator")
-            v-list-tile-title Komica
-          v-list-tile(@click="$router.push('/komica/live')")
-            v-list-tile-title 新番實況
-
-
+    SideMenu(v-model="drawer")
+    
     v-toolbar(app fixed)
-      v-toolbar-side-icon(@click.stop="drawer = !drawer")
+      v-toolbar-side-icon(v-show="!isDetails" @click.stop="drawer = !drawer")
+      v-btn(v-show="isDetails" 
+        small icon
+        @click="$router.go(-1)")
+        v-icon arrow_back
       v-toolbar-title Application
+      v-spacer
+      
+
     v-content
       nuxt
     v-footer(app inset height="auto")
@@ -26,10 +22,19 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import SideMenu from '~/components/SideMenu.vue';
 
-@Component
+@Component({
+  components: {
+    SideMenu,
+  },
+})
 export default class DefaultLayout extends Vue {
   drawer: boolean = false;
+
+  get isDetails(): boolean {
+    return this.$route.name.includes('-id') && !!this.$route.params.id;
+  }
 }
 </script>
 

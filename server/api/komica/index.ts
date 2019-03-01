@@ -4,14 +4,16 @@ import { RequestExtension, ResponseExtension } from '../../../view-models/extens
 
 const router = Router();
 
-router.get('/live', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
-  res.result = await NSKomica.getKomicaListResult('live', req.query.p);
+router.get('/:board', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { board } = req.params;
+  res.result = await NSKomica.getKomicaListResult(board, req.query.p);
 
   next();
 });
 
-router.get('/live/:id', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
-  res.result = await NSKomica.getKomicaDetailsResult('live', req.params.id);
+router.get('/:board/:id', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { board, id } = req.params;
+  res.result = await NSKomica.getKomicaDetailsResult(board, id);
 
   next();
 });

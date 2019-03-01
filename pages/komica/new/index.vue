@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    KomicaList(board="live")
+    KomicaList(board="new")
 </template>
 
 <script lang="ts">
@@ -10,7 +10,7 @@ import KomicaList from '~/components/Komica/List.vue';
 @Component({
   head() {
     return {
-      title: '新番實況',
+      title: '新番捏他',
     };
   },
   components: {

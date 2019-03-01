@@ -1,5 +1,5 @@
 <template lang="pug">
-  KomicaDetails(board="live")
+  KomicaDetails(board="new")
 </template>
 
 <script lang="ts">

@@ -6,7 +6,8 @@ export default {
   ** Headers of the page
   */
   head: {
-    title: 'starter',
+    title: 'J格4',
+    titleTemplate: '這是什麼? | %s',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
