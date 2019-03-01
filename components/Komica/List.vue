@@ -12,8 +12,8 @@
             v-card-title(primary-title)
               div 
                 div(class="grey--text") {{ item.dateTime }}
-                div(class="headline") {{ item.title }}
-                div(class="grey--text" v-html="handleHtmlText(item.text)")
+                div(class="headline mb-2") {{ item.title }}
+                div(class="grey--text mb-2" v-html="handleHtmlText(item.text)")
                 div(class="caption") {{ item.warnText }}
 
             v-card-actions

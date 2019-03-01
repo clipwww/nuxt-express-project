@@ -5,8 +5,9 @@ import $ from 'cheerio';
 export namespace NSKomica {
   export const config = {
     domain: 'http://2cat.komica.org',
-    live: 'https://2cat.komica.org/~tedc21thc/live/pixmicat.php',
-    new: 'https://2cat.komica.org/~tedc21thc/new/pixmicat.php',
+    getUrl(board: string): string {
+      return `${this.domain}/~tedc21thc/${board}/pixmicat.php`;
+    }
   };
 
   export type boardType = 'live' | 'new';
@@ -103,7 +104,7 @@ export namespace NSKomica {
 
     try {
 
-      const { data: htmlString } = await axios.get<string>(config[type], {
+      const { data: htmlString } = await axios.get<string>(config.getUrl(type), {
         params: {
           page_num: page,
         }
@@ -153,7 +154,7 @@ export namespace NSKomica {
     const result = new DetailsResultVM();
 
     try {
-      const { data: htmlString } = await axios.get<string>(config[type], {
+      const { data: htmlString } = await axios.get<string>(config.getUrl(type), {
         params: {
           res: resId,
         }

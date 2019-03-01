@@ -11,7 +11,7 @@ import KomicaDetails from '~/components/Komica/Details.vue';
     KomicaDetails,
   },
 })
-export default class KomicaLiveDetailsPage extends Vue {}
+export default class KomicaNewDetailsPage extends Vue {}
 </script>
 
 <style>

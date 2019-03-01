@@ -33,7 +33,8 @@ export default {
   plugins: ['plugins/vuetify'],
 
   modules: [
-    '@nuxtjs/style-resources'
+    '@nuxtjs/style-resources',
+    ['@nuxtjs/google-analytics', { id: 'UA-93335284-2' }],
   ],
 
   router: {

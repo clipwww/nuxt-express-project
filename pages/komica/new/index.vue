@@ -17,7 +17,7 @@ import KomicaList from '~/components/Komica/List.vue';
     KomicaList,
   },
 })
-export default class KomicaLivePage extends Vue {}
+export default class KomicaNewPage extends Vue {}
 </script>
 
 <style lang="scss" scoped>
