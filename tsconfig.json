@@ -2,6 +2,7 @@
   "defaultSeverity": "warning",
   "extends": "@nuxt/typescript",
   "compilerOptions": {
+    "noImplicitAny": false,
     "baseUrl": ".",
     "types": [
       "@types/node",
