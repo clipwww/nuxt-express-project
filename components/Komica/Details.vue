@@ -52,21 +52,22 @@
         v-icon refresh
     
     VueGallery(:images="images" :index="index" @close="index = null")
-    v-dialog(v-model="isImgDialogOpen" fullscreen hide-overlay transition="dialog-bottom-transition")
-      v-card
+    v-dialog(v-model="isImgDialogOpen" fullscreen hide-overlay scrollable transition="dialog-bottom-transition")
+      v-card()
         v-toolbar(dark color="primary")
           v-toolbar-title 相簿
           v-spacer
           v-btn(icon dark @click="isImgDialogOpen = false")
             v-icon close
-        v-container
-          v-layout(row wrap)
-            v-flex(xs6 sm4 md3 pa-1
-              v-for="(item, $index) in hasImagePosts" 
-              :key="`${item.id}_${$index}`" )
-              v-img(:src="item.sImg" 
-                :lazy-src="item.sImg" 
-                @click="index = $index")
+        v-card-text(style="height: 100%")
+          v-container
+            v-layout(row wrap)
+              v-flex(xs6 sm4 md3 lg2 pa-1
+                v-for="(item, $index) in hasImagePosts" 
+                :key="`${item.id}_${$index}`" )
+                v-img(:src="item.sImg" 
+                  :lazy-src="item.sImg" 
+                  @click="index = $index")
 </template>
 
 <script lang="ts">
