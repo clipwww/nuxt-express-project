@@ -10,7 +10,7 @@
                 span {{ item.id }}
 
             v-card-title(primary-title)
-              div 
+              div
                 div(class="grey--text") {{ item.dateTime }}
                 div(class="headline mb-2") {{ item.title }}
                 div(class="grey--text mb-2" v-html="handleHtmlText(item.text)")
@@ -47,7 +47,7 @@ export default class KomicaList extends Vue {
   @Prop({ type: String, required: true }) board!: string;
   posts: NSKomica.IPostData[] = [];
   pages: string[] = [];
-  pageIndex: number = 1;
+  pageIndex: number = 0;
   isLoading: boolean = false;
   showId: string = '';
 
@@ -59,7 +59,7 @@ export default class KomicaList extends Vue {
     return htmlText.replace(/<br\/>|<br>|\\n/g, '');
   }
 
-  async getListData(page = 1): Promise<void> {
+  async getListData(page = 0): Promise<void> {
     this.isLoading = true;
     const ret = await komicaSVC.getList(this.board, page);
     this.isLoading = false;
@@ -67,7 +67,7 @@ export default class KomicaList extends Vue {
     console.log(ret);
     if (!ret.success) return;
 
-    if (page === 1) {
+    if (page === 0) {
       this.posts = ret.items;
     } else {
       this.posts = [...this.posts, ...ret.items];
