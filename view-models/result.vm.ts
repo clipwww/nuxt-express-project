@@ -33,3 +33,7 @@ export class ResultVM {
 export class ResultGenericVM<T> extends ResultVM {
   item!: T;
 }
+
+export class ResultListGenericVM<T> extends ResultVM {
+  items!: T[];
+}

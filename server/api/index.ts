@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import komica from './komica';
+import niconico from './niconico';
 
 const router = Router();
 
-// Add USERS Routes
-router.use('/komica', komica);
+// Add Routes
+router.use('/komica', komica)
+  .use('/niconico', niconico);
 
 export default router;
