@@ -12,7 +12,7 @@ router.get('/search/:service', async (req: RequestExtension, res: ResponseExtens
   next();
 });
 
-router.get('/:service/:id', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+router.get('/list/:service/:id', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { service, id } = req.params;
 
   res.result = await NSNiconico.getXmlToJsonData(service, id);
