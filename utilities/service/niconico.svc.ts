@@ -24,7 +24,10 @@ export class NiconicoSVC extends BaseSVC {
    */
   async search(service: string, params: NSNiconico.IQuery) {
     const ret = await this.axiosInstance.get<ResultListGenericVM<NSNiconico.ISearchData>>(`${this.baseURL}/search/${service}`, {
-      params,
+      params: {
+        fields: 'contentId,title,description,tags,categoryTags,viewCounter,mylistCounter,commentCounter,startTime,lastCommentTime,lengthSeconds,thumbnailUrl',
+        ...params,
+      },
     });
     return ret.data;
   }

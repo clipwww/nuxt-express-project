@@ -42,8 +42,6 @@ export default class NicoNicoPage extends Vue {
       targets: 'tags',
       _sort: 'startTime',
       _context: 'apiguide',
-      fields:
-        'contentId,title,description,tags,categoryTags,viewCounter,mylistCounter,commentCounter,startTime,lastCommentTime,lengthSeconds,thumbnailUrl',
       _limit: 100,
     });
     if (!ret.success) return;
