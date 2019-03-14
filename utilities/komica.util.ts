@@ -21,14 +21,6 @@ export namespace NSKomica {
     item!: IPostData;
   }
 
-  export const pageMapping = {
-    1: 'index.html',
-    2: '1.htm',
-    3: '2.html',
-    4: '3.html',
-    5: 'pixmicat.php?page_num=5'
-  };
-
   export interface IPostData {
     id: string;
     title: string;
@@ -106,7 +98,7 @@ export namespace NSKomica {
 
       const { data: htmlString } = await axios.get<string>(config.getUrl(type), {
         params: {
-          page_num: page,
+          page_num: page - 1,
         }
       });
 

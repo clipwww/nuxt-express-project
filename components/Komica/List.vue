@@ -47,7 +47,7 @@ export default class KomicaList extends Vue {
   @Prop({ type: String, required: true }) board!: string;
   posts: NSKomica.IPostData[] = [];
   pages: string[] = [];
-  pageIndex: number = 0;
+  pageIndex: number = 1;
   isLoading: boolean = false;
   showId: string = '';
 
@@ -59,7 +59,7 @@ export default class KomicaList extends Vue {
     return htmlText.replace(/<br\/>|<br>|\\n/g, '');
   }
 
-  async getListData(page = 0): Promise<void> {
+  async getListData(page = 1): Promise<void> {
     this.isLoading = true;
     const ret = await komicaSVC.getList(this.board, page);
     this.isLoading = false;
@@ -67,7 +67,7 @@ export default class KomicaList extends Vue {
     console.log(ret);
     if (!ret.success) return;
 
-    if (page === 0) {
+    if (page === 1) {
       this.posts = ret.items;
     } else {
       this.posts = [...this.posts, ...ret.items];
