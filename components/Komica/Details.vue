@@ -2,9 +2,10 @@
   v-container(fluid grid-list-lg)
     v-layout(row wrap)
       v-flex(xs12 sm6 offset-sm3)
-        v-card
+        v-card(:id="`r${post.id}`")
           v-card-title(primary-title)
             div
+              div No. {{ post.id }}
               span(class="grey--text") {{ post.userId }}
               div(class="headline") {{ post.title }}
               span(class="grey--text") {{ post.email }}
@@ -19,9 +20,10 @@
             span(class="grey--text") {{ post.dateTime }}
 
       v-flex(xs12 sm6 offset-sm3 v-for="item in post.reply" :key="item.id")
-        v-card(color="blue-grey darken-2")
+        v-card(:id="`r${item.id}`" :color="cardColor(`#r${item.id}`)")
           v-container
             div
+              div No. {{ item.id }}
               span(class="grey--text  mr-2") {{ item.userId }}
               span(class="grey--text") {{ item.title }}
               v-layout(row)
@@ -50,7 +52,7 @@
       v-btn(color="blue darken-4" small fab
         @click="getPostData")
         v-icon refresh
-    
+
     VueGallery(:images="images" :index="index" @close="index = null")
     v-dialog(v-model="isImgDialogOpen" fullscreen hide-overlay scrollable transition="dialog-bottom-transition")
       v-card()
@@ -63,10 +65,10 @@
           v-container
             v-layout(row wrap)
               v-flex(xs6 sm4 md3 lg2 pa-1
-                v-for="(item, $index) in hasImagePosts" 
+                v-for="(item, $index) in hasImagePosts"
                 :key="`${item.id}_${$index}`" )
-                v-img(:src="item.sImg" 
-                  :lazy-src="item.sImg" 
+                v-img(:src="item.sImg"
+                  :lazy-src="item.sImg"
                   @click="index = $index")
 </template>
 
@@ -96,10 +98,12 @@ export default class KomicaDetails extends Vue {
     reply: [],
     warnText: '',
     dateTime: '',
+    dateCreated: '',
   };
   fab: boolean = false;
   isImgDialogOpen: boolean = false;
   index: number | null = null;
+  hashTargetId: string = window.location.hash;
 
   get hasImagePosts(): NSKomica.IPostData[] {
     return [this.post].concat(this.post.reply).filter(obj => obj.sImg);
@@ -111,10 +115,33 @@ export default class KomicaDetails extends Vue {
     });
   }
 
+  cardColor(id: string): string {
+    const isTarget = this.hashTargetId === id;
+    return isTarget ? 'brown darken-2' : 'blue-grey darken-2';
+  }
+
   async getPostData(): Promise<void> {
     const ret = await komicaSVC.getDetails(this.board, this.$route.params.id);
 
     this.post = ret.item;
+
+    this.$nextTick(() => {
+      const $aList = document.querySelectorAll('a.qlink');
+      const length = $aList.length;
+      for (let i = 0; i < length; i++) {
+        const $el = $aList[i] as HTMLElement;
+        $el.onclick = (event: Event) => {
+          event.preventDefault();
+          const $a = event.target as HTMLElement;
+          if (!$a) return;
+          const attr = $a.attributes.getNamedItem('href');
+          if (!attr) return;
+          this.hashTargetId = attr.value;
+          const $target = document.querySelector(this.hashTargetId) as HTMLElement;
+          if ($target) window.scrollTo(0, $target.offsetTop - 60);
+        };
+      }
+    });
   }
 
   findImageIndex(src: string): number {
@@ -135,6 +162,8 @@ export default class KomicaDetails extends Vue {
   created() {
     this.getPostData();
   }
+
+  updated() {}
 }
 </script>
 

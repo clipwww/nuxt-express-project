@@ -1,6 +1,8 @@
+import $ from 'cheerio';
+import moment, { Moment } from 'moment';
+
 import { ResultVM, ResultCode } from '../view-models/result.vm';
 import axios from './axios.util';
-import $ from 'cheerio';
 
 export namespace NSKomica {
   export const config = {
@@ -30,6 +32,7 @@ export namespace NSKomica {
     sImg: string;
     name: string;
     dateTime: string;
+    dateCreated: Moment | string;
     userId: string;
     warnText: string;
     reply: IPostData[];
@@ -53,6 +56,10 @@ export namespace NSKomica {
     const userId = label.slice(label.indexOf('ID') + 3, label.indexOf(']')) || '';
     const warnText = $el.find('.warn_txt2').text() || '';
 
+    const date = dateTime.slice(0, dateTime.indexOf('('));
+    const time = dateTime.slice(dateTime.indexOf(')') + 1);
+    const dateCreated = moment(`20${date.replace(/\//g, '-')}T${time}`);
+
     return {
       id,
       title,
@@ -62,6 +69,7 @@ export namespace NSKomica {
       sImg,
       name,
       dateTime,
+      dateCreated,
       userId,
       warnText,
       reply: []
