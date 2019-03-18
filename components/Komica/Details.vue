@@ -163,7 +163,7 @@ export default class KomicaDetails extends Vue {
     this.getPostData();
   }
 
-  updated() {}
+  // updated() {}
 }
 </script>
 
