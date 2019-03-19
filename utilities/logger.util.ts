@@ -12,7 +12,8 @@ const logger = winston.createLogger({
     winston.format.colorize(),
     winston.format.simple(),
     winston.format.printf(info => {
-      return `[${info.level}] ${info.message} ${moment(info.timestamp).format('YYYY-MM-DD HH:mm:ss')} ${JSON.stringify(info.meta, null, 2)}`;
+      return `[${info.level}] ${info.message} ${moment(info.timestamp).format('YYYY-MM-DD HH:mm:ss')}`;
+      // ${JSON.stringify(info.meta, null, 2)}
     })
   ),
 });

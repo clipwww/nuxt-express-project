@@ -46,7 +46,11 @@ export namespace NSKomica {
     const oImg = $el.find('a[href*=\'src\']').attr('href')
       ? `${config.domain}${$el.find('a[href*=\'src\']').attr('href')}`
       : '';
-    const sImg = $el.find('img.img').attr('src') ? `${config.domain}${$el.find('img.img').attr('src')}` : '';
+    let sImg = $el.find('img.img').attr('src') || '';
+    if (sImg) {
+      sImg = sImg.includes('nothumb') ? `${config.domain}/~tedc21thc/new/nothumb.gif` : `${config.domain}${sImg}`;
+    }
+
     const name = $el.find('.name').text() || '';
     const label = $el
       .find(`label[for="${id}"]`)
