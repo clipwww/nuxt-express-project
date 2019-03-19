@@ -17,6 +17,10 @@
           v-list-tile-action
             v-icon bookmark_border
           v-list-tile-title 新番實況
+      v-list-tile(@click="$router.push('/movie')")
+        v-list-tile-action
+          v-icon movie
+        v-list-tile-title 電影時刻查詢
 </template>
 
 <script lang="ts">

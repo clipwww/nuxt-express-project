@@ -14,37 +14,32 @@ export namespace NSMovie {
     }
   };
 
-  interface Movie {
-    movieId: string;
-    movieName: string;
+  export interface MovieInfo {
+    id: string;
+    name: string;
+    description: string;
+    runtime: number;
+    poster: string;
+    currentDate: string;
+    releaseDate: string;
   }
 
-  interface City {
-    cityId: string;
-    cityName: string;
-  }
-
-  interface Theater {
-    theaterId: string;
-    theaterName: string;
-    movieVersions: {
-      versionName: string;
+  export interface Theater {
+    id: string;
+    name: string;
+    versions: {
+      name: string;
       times: string[];
     }[];
   }
 
   export class MovieTimesResult extends ResultVM {
-    item!: {
-      date: string;
-      movieName: string;
-      movieRuntime: number;
-      releaseDate: string;
-    };
+    item!: MovieInfo;
     items!: Theater[];
   }
 
-  export async function getMovieList(): Promise<ResultListGenericVM<Movie>> {
-    const result = new ResultListGenericVM<Movie>();
+  export async function getMovieList(): Promise<ResultListGenericVM<{ id: string, name: string }>> {
+    const result = new ResultListGenericVM<{ id: string, name: string }>();
 
     try {
       const { data: htmlString } = await axios.get(config.getUrl('movie'));
@@ -55,8 +50,8 @@ export namespace NSMovie {
         return !!el.attribs.value;
       }).map((_i, el) => {
         return {
-          movieId: el.attribs.value,
-          movieName: $(el).text(),
+          id: el.attribs.value,
+          name: $(el).text(),
         };
       }).get();
 
@@ -67,8 +62,8 @@ export namespace NSMovie {
     }
   }
 
-  export async function getCityList(): Promise<ResultListGenericVM<City>> {
-    const result = new ResultListGenericVM<City>();
+  export async function getCityList(): Promise<ResultListGenericVM<{ id: string, name: string }>> {
+    const result = new ResultListGenericVM<{ id: string, name: string }>();
 
     try {
       const { data: htmlString } = await axios.get(config.getUrl('movie'));
@@ -79,8 +74,30 @@ export namespace NSMovie {
         return !!el.attribs.value;
       }).map((_i, el) => {
         return {
-          cityId: el.attribs.value,
-          cityName: $(el).text(),
+          id: el.attribs.value,
+          name: $(el).text(),
+        };
+      }).get();
+
+      return result.setResultValue(true, ResultCode.success);
+
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
+  }
+
+  export async function getTheaterList(cityId: string): Promise<ResultListGenericVM<{ id: string, name: string }>> {
+    const result = new ResultListGenericVM<{ id: string, name: string }>();
+
+    try {
+      const { data: htmlString } = await axios.get(`${config.getUrl('showtime')}/${cityId}`);
+
+      const $el = $(htmlString);
+
+      result.items = $el.find(`#theaterList a[href*="/showtime/"]`).map((_i, el) => {
+        return {
+          id: $(el).attr('href').split('/')[2],
+          name: $(el).text().trim(),
         };
       }).get();
 
@@ -100,11 +117,15 @@ export namespace NSMovie {
       const $el = $(htmlString);
 
       const movieInfoArr = $el.find('.runtimeText').text().split(' ');
+      const ldJson = JSON.parse($el.find('[type=\'application/ld+json\']').html() || '{}');
 
       result.item = {
-        date: moment().format('YYYY-MM-DD'),
-        movieName: $el.find('h2').text().trim(),
-        movieRuntime: +(movieInfoArr.find(str => str.includes('片長')) || '0').replace(/片長：|分/g, '').trim(),
+        id: movieId,
+        name: (ldJson || '').name,
+        runtime: +(movieInfoArr.find(str => str.includes('片長')) || '0').replace(/片長：|分/g, '').trim(),
+        poster: (ldJson.image || '').trim(),
+        description: ldJson.description,
+        currentDate: moment().format('YYYY/MM/DD'),
         releaseDate: (movieInfoArr.find(str => str.includes('上映日期：')) || '').replace(/上映日期：/g, '').trim()
       };
 
@@ -133,11 +154,11 @@ export namespace NSMovie {
         });
 
         return {
-          theaterId: key,
-          theaterName: tempObject[key][0].theaterName,
-          movieVersions: Object.keys(versionObj).map(vKey => {
+          id: key,
+          name: tempObject[key][0].theaterName,
+          versions: Object.keys(versionObj).map(vKey => {
             return {
-              versionName: vKey,
+              name: vKey,
               times: versionObj[vKey]
             };
           })

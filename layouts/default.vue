@@ -1,16 +1,16 @@
 <template lang="pug">
   v-app(dark)
     SideMenu(v-model="drawer")
-    
+
     v-toolbar(app fixed)
       v-toolbar-side-icon(v-show="!isDetails" @click.stop="drawer = !drawer")
-      v-btn(v-show="isDetails" 
+      v-btn(v-show="isDetails"
         small icon
         @click="$router.go(-1)")
         v-icon arrow_back
       v-toolbar-title Application
       v-spacer
-      
+
 
     v-content
       nuxt

@@ -18,6 +18,14 @@ router.get('/list', async (_req: RequestExtension, res: ResponseExtension, next:
   next();
 });
 
+router.get('/theater/:cityId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { cityId } = req.params;
+
+  res.result = await NSMovie.getTheaterList(cityId);
+
+  next();
+});
+
 router.get('/times/:movieId/:cityId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { movieId, cityId } = req.params;
 
