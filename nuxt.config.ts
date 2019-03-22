@@ -42,7 +42,7 @@ export default {
   },
 
   styleResources: {
-    scss: ['./assets/scss/variables.scss', './assets/scss/mixin.scss']
+    scss: ['./assets/scss/variables.scss']
   },
 
   serverMiddleware: [
@@ -50,11 +50,14 @@ export default {
   ],
 
   build: {
-    postcss: [
-      require('autoprefixer')({
+    postcss: {
+      'postcss-cssnext': {
         browsers: ['last 5 version', 'iOS >=8', 'Safari >=8']
-      })
-    ]
+      }
+    },
+    typescript: {
+      typeCheck: false // or ForkTsChecker options
+    }
     // extend(config, ctx) { },
   }
 };
