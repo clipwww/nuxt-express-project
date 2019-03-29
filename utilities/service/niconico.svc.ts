@@ -12,7 +12,7 @@ export class NiconicoSVC extends BaseSVC {
    * @param {string} id 列表id
    */
   async getList(service: string, id: string) {
-    const ret = await this.axiosInstance.get<ResultGenericVM<NSNiconico.IChannel>>(`${this.baseURL}/list/${service}/${id}`);
+    const ret = await this.axiosInstance.get<ResultGenericVM<NSNiconico.Channel>>(`${this.baseURL}/list/${service}/${id}`);
     return ret.data;
   }
 
@@ -20,10 +20,10 @@ export class NiconicoSVC extends BaseSVC {
    * [GET] /api/niconico/search/:service
    * 取得搜尋結果
    * @param {string} service 服務
-   * @query {IQuery}
+   * @query {Query}
    */
-  async search(service: string, params: NSNiconico.IQuery) {
-    const ret = await this.axiosInstance.get<ResultListGenericVM<NSNiconico.ISearchData>>(`${this.baseURL}/search/${service}`, {
+  async search(service: string, params: NSNiconico.Query) {
+    const ret = await this.axiosInstance.get<ResultListGenericVM<NSNiconico.SearchData>>(`${this.baseURL}/search/${service}`, {
       params: {
         fields: 'contentId,title,description,tags,categoryTags,viewCounter,mylistCounter,commentCounter,startTime,lastCommentTime,lengthSeconds,thumbnailUrl',
         ...params,

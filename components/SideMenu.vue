@@ -17,6 +17,18 @@
           v-list-tile-action
             v-icon bookmark_border
           v-list-tile-title 新番實況
+      v-list-group(prepend-icon="tv")
+        v-list-tile(slot="activator")
+          v-list-tile-title NicoNico
+        v-list-tile(@click="$router.push('/niconico')")
+          v-list-tile-action
+            v-icon search
+          v-list-tile-title 搜尋
+        v-list-tile(@click="$router.push('/niconico/ranking')")
+          v-list-tile-action
+            v-icon list
+          v-list-tile-title 排名
+
       v-list-tile(@click="$router.push('/movie')")
         v-list-tile-action
           v-icon movie

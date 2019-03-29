@@ -15,15 +15,15 @@ export namespace NSKomica {
   export type boardType = 'live' | 'new';
 
   export class ListResultVM extends ResultVM {
-    items!: IPostData[];
+    items!: PostData[];
     pages!: string[];
   }
 
   export class DetailsResultVM extends ResultVM {
-    item!: IPostData;
+    item!: PostData;
   }
 
-  export interface IPostData {
+  export interface PostData {
     id: string;
     title: string;
     text: string;
@@ -35,10 +35,10 @@ export namespace NSKomica {
     dateCreated: Moment | string;
     userId: string;
     warnText: string;
-    reply: IPostData[];
+    reply: PostData[];
   }
 
-  const getPostData = ($el: Cheerio): IPostData => {
+  const getPostData = ($el: Cheerio): PostData => {
     const id = $el.attr('id').replace('r', '') || '';
     const title = $el.find('.title').text() || '';
     const text = $el.find('.quote').html() || '';
@@ -114,13 +114,13 @@ export namespace NSKomica {
         }
       });
 
-      const postDatas: IPostData[] = [];
+      const postDatas: PostData[] = [];
       const $html = $(htmlString);
 
       $html.find('.threadpost').each((_i, el) => {
         const $el = $(el);
         const temp = getPostData($el);
-        const reply: IPostData[] = [];
+        const reply: PostData[] = [];
 
         $html.find('.reply').each((_i, rEl) => {
           const $rEl = $(rEl);
@@ -165,7 +165,7 @@ export namespace NSKomica {
       });
 
       const $html = $(htmlString);
-      const postData: IPostData = getPostData($html.find('.threadpost'));
+      const postData: PostData = getPostData($html.find('.threadpost'));
 
       $html.find('.reply').each((_i, rEl) => {
         const $rEl = $(rEl);

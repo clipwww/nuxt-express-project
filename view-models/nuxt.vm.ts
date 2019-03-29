@@ -3,17 +3,17 @@ import { Route } from 'vue-router';
 import { Store } from 'vuex';
 import { Request, Response } from 'express';
 
-interface INuxtLoading {
+interface NuxtLoading {
   start(): void;
   finish(): void;
 }
 
-export interface IExtraVue extends Vue {
-  $loading: INuxtLoading;
+export interface ExtraVue extends Vue {
+  $loading: NuxtLoading;
 }
 
-export interface INuxtContext {
-  app?: IExtraVue;
+export interface NuxtContext {
+  app?: ExtraVue;
   isDev?: boolean;
   isHMR?: boolean;
   route: Route;

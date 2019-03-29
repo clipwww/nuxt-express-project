@@ -22,12 +22,12 @@ export namespace NSNiconico {
     }
   };
 
-  export type Iservice =
+  export type Service =
     'video' | 'live' | 'illust' | 'manga' | 'channel' |
     'channelarticle' | 'news' | 'game' | 'license_search' |
     'mylist_video' | 'summary' | 'community' | 'commons';
 
-  export interface IQuery {
+  export interface Query {
     q: string;
     targets: string; // title,description,tags
     _sort: string;
@@ -39,7 +39,7 @@ export namespace NSNiconico {
     _limit?: number;
   }
 
-  export interface ISearchData {
+  export interface SearchData {
     contentId: string;
     title: string; // 標題
     description: string; // 說明
@@ -58,7 +58,7 @@ export namespace NSNiconico {
 
   }
 
-  export interface IChannel {
+  export interface Channel {
     title: string;
     link: string;
     description: string;
@@ -66,10 +66,10 @@ export namespace NSNiconico {
     lastBuildDate: moment.Moment | string;
     generator: string;
     copyright: string;
-    item: IVideo[];
+    item: Video[];
   }
 
-  export interface IVideo {
+  export interface Video {
     title: string;
     thumbnailSrc: string;
     link: string;
@@ -82,7 +82,7 @@ export namespace NSNiconico {
 
   }
 
-  interface ISearchResult {
+  interface SearchResult {
     meta: {
       status: number;
       id?: string;
@@ -90,14 +90,14 @@ export namespace NSNiconico {
       errorCode?: string;
       errorMessage?: string;
     };
-    data?: ISearchData[];
+    data?: SearchData[];
   }
 
-  export const searchResult = async (service: Iservice, query: IQuery | any): Promise<ResultListGenericVM<ISearchData>> => {
-    const result = new ResultListGenericVM<ISearchData>();
+  export const searchResult = async (service: Service, query: Query | any): Promise<ResultListGenericVM<SearchData>> => {
+    const result = new ResultListGenericVM<SearchData>();
 
     try {
-      const { data: ret }: { data: ISearchResult } = await axios.get(`https://api.search.nicovideo.jp/api/v2/${service}/contents/search`, {
+      const { data: ret }: { data: SearchResult } = await axios.get(`https://api.search.nicovideo.jp/api/v2/${service}/contents/search`, {
         params: {
           ...query
         },
@@ -116,12 +116,12 @@ export namespace NSNiconico {
   };
 
   export const getXmlToJsonData = async (service: string, id: string): Promise<any> => {
-    const result = new ResultGenericVM<IChannel>();
+    const result = new ResultGenericVM<Channel>();
 
     try {
       const { data: ret } = await axios.get(config.getUrl(service, id));
 
-      const { rss } = JSON.parse(xmlParser.toJson(ret)) as { rss: { channel: IChannel } };
+      const { rss } = JSON.parse(xmlParser.toJson(ret)) as { rss: { channel: Channel } };
 
       rss.channel.pubDate = moment(rss.channel.pubDate);
       rss.channel.lastBuildDate = moment(rss.channel.lastBuildDate);

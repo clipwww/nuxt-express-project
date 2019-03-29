@@ -23,7 +23,7 @@ import { NSNiconico } from '~/utilities/niconico.util';
 export default class NicoNicoPage extends Vue {
   keyword: string = 'ガルパン';
 
-  ranking: NSNiconico.IChannel = {
+  ranking: NSNiconico.Channel = {
     title: '',
     generator: '',
     link: '',
@@ -34,7 +34,7 @@ export default class NicoNicoPage extends Vue {
     item: [],
   };
 
-  searchList: NSNiconico.ISearchData[] = [];
+  searchList: NSNiconico.SearchData[] = [];
 
   async search() {
     const ret = await niconicoSVC.search('video', {

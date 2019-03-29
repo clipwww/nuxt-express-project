@@ -45,7 +45,7 @@ import { NSKomica } from '~/utilities/komica.util';
 @Component
 export default class KomicaList extends Vue {
   @Prop({ type: String, required: true }) board!: string;
-  posts: NSKomica.IPostData[] = [];
+  posts: NSKomica.PostData[] = [];
   pages: string[] = [];
   pageIndex: number = 1;
   isLoading: boolean = false;

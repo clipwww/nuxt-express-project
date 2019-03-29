@@ -86,7 +86,7 @@ import { NSKomica } from '~/utilities/komica.util';
 export default class KomicaDetails extends Vue {
   @Prop({ type: String, required: true }) board!: string;
 
-  post: NSKomica.IPostData = {
+  post: NSKomica.PostData = {
     id: '',
     userId: '',
     name: '',
@@ -105,7 +105,7 @@ export default class KomicaDetails extends Vue {
   index: number | null = null;
   hashTargetId: string = window.location.hash;
 
-  get hasImagePosts(): NSKomica.IPostData[] {
+  get hasImagePosts(): NSKomica.PostData[] {
     return [this.post].concat(this.post.reply).filter(obj => obj.sImg);
   }
 
