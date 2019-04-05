@@ -18,7 +18,7 @@
     "node": "8.9.1"
   },
   "dependencies": {
-    "@nuxt/typescript": "^2.5.1",
+    "@nuxt/typescript": "^2.6.1",
     "@nuxtjs/google-analytics": "^2.1.0",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
@@ -28,7 +28,7 @@
     "lodash": "^4.17.11",
     "material-design-icons-iconfont": "^3.0.3",
     "moment": "^2.24.0",
-    "nuxt": "v2.5.1",
+    "nuxt": "v2.6.1",
     "source-map-support": "^0.4.15",
     "vue-gallery": "^2.0.0",
     "vue-property-decorator": "^7.3.0",
@@ -37,6 +37,7 @@
     "xml2json": "^0.11.2"
   },
   "devDependencies": {
+    "@babel/runtime-corejs2": "^7.4.3",
     "@nuxtjs/style-resources": "^0.1.2",
     "@types/cheerio": "^0.22.10",
     "@types/express": "^4.16.1",
@@ -44,6 +45,7 @@
     "@types/jquery": "^3.3.29",
     "autoprefixer": "^7.1.2",
     "cheerio": "^1.0.0-rc.2",
+    "core-js": "^2.6.5",
     "node-sass": "^4.5.3",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
