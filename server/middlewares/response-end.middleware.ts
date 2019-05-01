@@ -3,6 +3,9 @@ import { ResultVM, ResultCode } from '../../view-models/result.vm';
 
 export const responseEndMiddleware = async (_req: RequestExtension, res: ResponseExtension) => {
   try {
+    if (!res.result) {
+      throw Error('No Result.')
+    }
 
     res.json(res.result);
 
