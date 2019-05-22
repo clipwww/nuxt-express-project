@@ -29,7 +29,7 @@
     "m3u8stream": "^0.6.2",
     "material-design-icons-iconfont": "^3.0.3",
     "moment": "^2.24.0",
-    "nuxt": "v2.6.1",
+    "nuxt": "v2.7.1",
     "source-map-support": "^0.4.15",
     "vue-gallery": "^2.0.0",
     "vue-property-decorator": "^7.3.0",
