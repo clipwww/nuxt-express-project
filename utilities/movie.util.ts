@@ -42,15 +42,16 @@ export namespace NSMovie {
     const result = new ResultListGenericVM<{ id: string, name: string }>();
 
     try {
-      const { data: htmlString } = await axios.get(config.getUrl('movie'));
+      const { data: htmlString } = await axios.get(config.getUrl('home/quickSelect.html'));
 
       const $el = $(htmlString);
 
-      result.items = $el.find('select[name=film_id] option').filter((_i, el) => {
+      result.items = $el.find('select[name=select2] option').filter((_i, el) => {
         return !!el.attribs.value;
       }).map((_i, el) => {
+        const valueArr = el.attribs.value.split('/')
         return {
-          id: el.attribs.value,
+          id: valueArr[2],
           name: $(el).text(),
         };
       }).get();
@@ -66,7 +67,7 @@ export namespace NSMovie {
     const result = new ResultListGenericVM<{ id: string, name: string }>();
 
     try {
-      const { data: htmlString } = await axios.get(config.getUrl('movie'));
+      const { data: htmlString } = await axios.get(config.getUrl('home/quickSelect.html'));
 
       const $el = $(htmlString);
 
@@ -75,7 +76,7 @@ export namespace NSMovie {
       }).map((_i, el) => {
         return {
           id: el.attribs.value,
-          name: $(el).text(),
+          name: $(el).text().trim(),
         };
       }).get();
 
