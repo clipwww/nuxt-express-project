@@ -85,7 +85,7 @@ export namespace NSAnime1 {
   export const getMp4Url = async (url: string): Promise<string> => {
     const { data: htmlString } = await axios.get<string>(url);
 
-    const mathArr = htmlString.match(/(https|http):\/\/([a-z0-9|-]+\.)anime1(|\.[a-z0-9]+)\/\d{0,}\/\d\.mp4/)
+    const mathArr = htmlString.match(/(https|http):\/\/([\w-]+\.)+[\w-]+([\w-./?%&=]*)\.mp4?/)
 
     return mathArr ? mathArr[0] : '';
   }
