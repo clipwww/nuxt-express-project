@@ -18,7 +18,7 @@ export default class NiconicoRankingPage extends Vue {
   channel: NSNiconico.Channel | null = null;
 
   async getRanking() {
-    const ret = await niconicoSVC.getList('ranking', 'daily');
+    const ret = await niconicoSVC.getList('ranking', 'anime');
 
     if (!ret.success) return;
 

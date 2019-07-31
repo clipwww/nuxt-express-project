@@ -17,7 +17,7 @@ export namespace NSNiconico {
           return `${this.domain}/mylist/${id}?rss=2.0`;
         case 'ranking':
         default:
-          return `${this.domain}/ranking/fav/${id}/all?rss=2.0`;
+          return `${this.domain}/ranking/genre/${id}?term=24h&rss=2.0&lang=ja-jp`;
       }
     }
   };
