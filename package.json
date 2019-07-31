@@ -22,6 +22,7 @@
     "@nuxtjs/google-analytics": "^2.1.0",
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
+    "chinese-conv": "^1.0.1",
     "cross-env": "^5.0.1",
     "express": "^4.15.3",
     "express-winston": "^3.1.0",
