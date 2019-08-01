@@ -20,7 +20,7 @@
   "dependencies": {
     "@nuxt/typescript": "^2.6.1",
     "@nuxtjs/google-analytics": "^2.1.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "babel-polyfill": "^6.26.0",
     "chinese-conv": "^1.0.1",
     "cross-env": "^5.0.1",
