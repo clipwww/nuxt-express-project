@@ -10,6 +10,12 @@ export namespace NSLKComic {
     domain: 'https://www.lightnovel.cn'
   }
 
+  export class DetailsResultVM<T> extends ResultListGenericVM<T> {
+    item!: {
+      title: string;
+    }
+  }
+
   export const getList = async (page: number = 1): Promise<ResultListGenericVM<any>> => {
     const result = new ResultListGenericVM<any>();
 
@@ -38,8 +44,8 @@ export namespace NSLKComic {
     }
   }
 
-  export const getDetails = async (id: string): Promise<ResultListGenericVM<any>> => {
-    const result = new ResultListGenericVM<any>();
+  export const getDetails = async (id: string): Promise<DetailsResultVM<{ id: string; src: string }>> => {
+    const result = new DetailsResultVM<{ id: string; src: string }>();
 
     try {
 
@@ -55,6 +61,10 @@ export namespace NSLKComic {
           src: $el.attr('file') || $el.attr('src'),
         }
       }).get();
+
+      result.item = {
+        title: $html.find('#thread_subject').text()
+      }
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
