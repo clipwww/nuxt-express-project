@@ -85,9 +85,25 @@ export namespace NSAnime1 {
   export const getMp4Url = async (url: string): Promise<string> => {
     const { data: htmlString } = await axios.get<string>(url);
 
-    const mathArr = htmlString.match(/(https|http):\/\/([\w-]+\.)+[\w-]+([\w-./?%&=]*)\.mp4?/)
+    // const mathArr = htmlString.match(/(https|http):\/\/([\w-]+\.)+[\w-]+([\w-./?%&=]*)\.mp4?/)
+    // return mathArr ? mathArr[0] : '';
 
-    return mathArr ? mathArr[0] : '';
+    const matchArr = htmlString.match(/d=([\S]+)\'/);
+    const d = matchArr ? matchArr[0].replace('\'', '') : '';
+
+    try {
+      const { data: ret } = await axios.post('https://v.anime1.me/api', d, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+
+      return ret.l;
+    } catch (err) {
+      console.log(err.response.data);
+      return '';
+    }
   }
 
 
