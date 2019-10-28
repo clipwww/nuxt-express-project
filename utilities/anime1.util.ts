@@ -49,6 +49,7 @@ export namespace NSAnime1 {
 
   export const getBangumi = async (id: string): Promise<ResultListGenericVM<BangumiData>> => {
     const result = new ResultListGenericVM<BangumiData>();
+    result.items = [];
 
     try {
       const { data: htmlString } = await axios.get<string>(`${config.domain}/?cat=${id}`, {
@@ -62,23 +63,41 @@ export namespace NSAnime1 {
 
       const bangumis = $html.find('[id*="post-"]');
 
-      result.items = bangumis.map((_i, el) => {
-        const $el = $(el);
-        const iframeSrc = $el.find('iframe').attr('src');
-        const type = iframeSrc.includes('watch?v=') ? 'mp4' : 'm3u8';
+      for (let i = 0; i < bangumis.length; i++) {
+        const $el = $(bangumis[i]);
+        const hasIframe = !!$el.find('iframe').length;
+        const iframeSrc = hasIframe ? $el.find('iframe').attr('src') : $el.find('.loadvideo').attr('data-src');
+        const type = hasIframe ? 'mp4' : 'm3u8';
 
-        return {
+
+
+        result.items.push({
           id: ($el.attr('id') || '').replace('post-', ''),
           name: $el.find('.entry-title').text(),
           type,
-          m3u8Url: type === 'm3u8' ? iframeSrc + '.m3u8' : null,
+          m3u8Url: type === 'm3u8' ? await getM3u8Url(iframeSrc) : null,
           mp4Url: type === 'mp4' ? iframeSrc : null,
-        } as BangumiData
-      }).get();
+        } as BangumiData)
+      }
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
       return result.setResultValue(false, ResultCode.error, err.message);
+    }
+  }
+
+  export const getM3u8Url = async (src: string): Promise<string> => {
+    try {
+      const { data: htmlString } = await axios.get<string>(src, {
+        withCredentials: true
+      });
+
+      const $html = $(htmlString);
+      const m3u8Url = $html.find('source').attr('src')
+      console.log(m3u8Url);
+      return m3u8Url;
+    } catch (err) {
+      return '';
     }
   }
 
