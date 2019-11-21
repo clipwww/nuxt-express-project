@@ -49,6 +49,12 @@ export default {
     server
   ],
 
+  buildModules: [
+    ['@nuxt/typescript-build', {
+      typeCheck: true,
+      ignoreNotFoundWarnings: true
+    }]
+  ],
   build: {
     postcss: {
       'postcss-cssnext': {

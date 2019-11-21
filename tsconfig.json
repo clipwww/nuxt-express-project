@@ -16,6 +16,7 @@
     "strict": true,
     "noImplicitAny": false,
     "noEmit": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "~/*": [
@@ -27,7 +28,7 @@
     },
     "types": [
       "@types/node",
-      "@nuxt/vue-app"
+      "@nuxt/types"
     ]
   }
 }

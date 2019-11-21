@@ -1,7 +1,7 @@
-import { IExtraVue } from 'view-models/nuxt.vm';
+import { ExtraVue } from 'view-models/nuxt.vm';
 
 declare global {
   interface Window {
-    $nuxt: IExtraVue;
+    $nuxt: ExtraVue;
   }
 }
