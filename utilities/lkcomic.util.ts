@@ -30,7 +30,7 @@ export namespace NSLKComic {
         const $aTag = $el.find(`a[onclick*=atarget]`);
 
         return {
-          id: $aTag.attr('href').replace('.html', ''),
+          id: ($aTag.attr('href') || '').replace('.html', ''),
           title: tify($aTag.text()), // 轉繁體中文
           originUrl: `${config.domain}/${$aTag.attr('href')}`,
           datePost: moment($el.find('.by .xi1').text(), 'YYYY-MM-DD HH:mm'),

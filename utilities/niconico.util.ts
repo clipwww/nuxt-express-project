@@ -25,7 +25,7 @@ export namespace NSNiconico {
   export type Service =
     'video' | 'live' | 'illust' | 'manga' | 'channel' |
     'channelarticle' | 'news' | 'game' | 'license_search' |
-    'mylist_video' | 'summary' | 'community' | 'commons';
+    'mylist_video' | 'summary' | 'community' | 'commons' | string;
 
   export interface Query {
     q: string;

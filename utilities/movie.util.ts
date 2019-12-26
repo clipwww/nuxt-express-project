@@ -97,7 +97,7 @@ export namespace NSMovie {
 
       result.items = $el.find(`#theaterList a[href*="/showtime/"]`).map((_i, el) => {
         return {
-          id: $(el).attr('href').split('/')[2],
+          id: ($(el).attr('href') || '').split('/')[2],
           name: $(el).text().trim(),
         };
       }).get();
@@ -134,7 +134,7 @@ export namespace NSMovie {
         const $theater = $(el).find('.theaterTitle');
 
         return {
-          theaterId: $theater.find('a').attr('href').split('/')[2],
+          theaterId: ($theater.find('a').attr('href') || '').split('/')[2],
           theaterName: $theater.text(),
           versionName: $(el).find('.filmVersion').text().trim(),
           time: $(el).find('li').filter((_i, el) => $(el).text().includes('：')).map((_i, el) => $(el).text()).get(),

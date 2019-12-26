@@ -15,7 +15,7 @@
     "precommit": "npm run lint"
   },
   "engines": {
-    "node": "8.9.1"
+    "node": "12.13.1"
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^0.2.4",

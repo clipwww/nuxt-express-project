@@ -39,10 +39,10 @@ export namespace NSKomica {
   }
 
   const getPostData = ($el: Cheerio): PostData => {
-    const id = $el.attr('id').replace('r', '') || '';
+    const id = ($el.attr('id') || '').replace('r', '') || '';
     const title = $el.find('.title').text() || '';
     const text = $el.find('.quote').html() || '';
-    const email = deCodeMailProtection($el.find('a[href*="email"]').attr('href'));
+    const email = deCodeMailProtection($el.find('a[href*="email"]').attr('href') as string);
     const oImg = $el.find('a[href*=\'src\']').attr('href')
       ? `${config.domain}${$el.find('a[href*=\'src\']').attr('href')}`
       : '';
@@ -103,7 +103,7 @@ export namespace NSKomica {
     return 'mailto: ' + n(href, url.length);
   };
 
-  export const getKomicaListResult = async (type: boardType, page: number = 1): Promise<ListResultVM> => {
+  export const getKomicaListResult = async (type: boardType | string, page: number = 1): Promise<ListResultVM> => {
     const result = new ListResultVM();
 
     try {
@@ -141,7 +141,7 @@ export namespace NSKomica {
         .find('#page_switch')
         .find('a')
         .each((_i, el) => {
-          pages.push($(el).attr('href'));
+          pages.push($(el).attr('href') as string);
         });
 
       result.items = postDatas;
@@ -153,7 +153,7 @@ export namespace NSKomica {
     }
   };
 
-  export const getKomicaDetailsResult = async (type: boardType, resId: string): Promise<DetailsResultVM> => {
+  export const getKomicaDetailsResult = async (type: boardType | string, resId: string): Promise<DetailsResultVM> => {
 
     const result = new DetailsResultVM();
 

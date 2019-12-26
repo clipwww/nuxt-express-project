@@ -75,7 +75,7 @@ export namespace NSAnime1 {
           id: ($el.attr('id') || '').replace('post-', ''),
           name: $el.find('.entry-title').text(),
           type,
-          m3u8Url: type === 'm3u8' ? await getM3u8Url(iframeSrc) : null,
+          m3u8Url: type === 'm3u8' ? await getM3u8Url(iframeSrc as string) : null,
           mp4Url: type === 'mp4' ? iframeSrc : null,
         } as BangumiData)
       }
@@ -95,7 +95,7 @@ export namespace NSAnime1 {
       const $html = $(htmlString);
       const m3u8Url = $html.find('source').attr('src')
       console.log(m3u8Url);
-      return m3u8Url;
+      return m3u8Url || '';
     } catch (err) {
       return '';
     }

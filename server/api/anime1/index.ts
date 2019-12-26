@@ -24,7 +24,7 @@ router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension,
 router.get('/download/m3u8', async (req: RequestExtension, res: ResponseExtension) => {
   const { url, name } = req.query;
 
-  const stream = m3u8stream(url);
+  const stream = m3u8stream(url as string);
 
   stream.on('progress', (segment, totalSegments, downloaded) => {
     console.log(

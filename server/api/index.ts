@@ -4,6 +4,7 @@ import niconico from './niconico';
 import movie from './movie';
 import anime1 from './anime1';
 import lk from './lk';
+import fb from './fb';
 
 const router = Router();
 
@@ -12,6 +13,7 @@ router.use('/komica', komica)
   .use('/niconico', niconico)
   .use('/movie', movie)
   .use('/anime1', anime1)
-  .use('/lk', lk);
+  .use('/lk', lk)
+  .use('/fb', fb);
 
 export default router;
