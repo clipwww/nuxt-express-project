@@ -21,7 +21,7 @@ export const crawlerFacebookFanPage = async (fbId: string) => {
           id: $el.find('.text_exposed_root').attr('id'),
           link: `https://www.facebook.com/${$el.find('a._5pcq').attr('href')}`,
           logo: $el.find('img').attr('src'),
-          img: $el.find('.scaledImageFitHeight').attr('src') || $el.find('._3chq').attr('src'),
+          img: $el.find('.scaledImageFitHeight').attr('src') || $el.find('.scaledImageFitWidth').attr('src') || $el.find('._3chq').attr('src'),
           content: $el.find('[data-testid="post_message"]').html(),
           utime: +($el.find('[data-utime]').attr('data-utime') || 0) * 1000,
           timestampContent: $el.find('.timestampContent').text(),
