@@ -1,5 +1,6 @@
 import $ from 'cheerio';
 import axios from 'axios';
+import moment from 'moment';
 
 import { ResultVM, ResultCode } from '../view-models/result.vm';
 
@@ -7,7 +8,11 @@ export const crawlerFacebookFanPage = async (fbId: string) => {
   const result = new ResultVM();
 
   try {
-    const { data: htmlString } = await axios.get<string>(`https://www.facebook.com/pg/${fbId}/posts`);
+    const { data: htmlString } = await axios.get<string>(`https://www.facebook.com/pg/${fbId}/posts`, {
+      headers: {
+        'Content-Language': 'zh-TW'
+      }
+    });
 
     const $html = $(htmlString);
 
@@ -17,13 +22,15 @@ export const crawlerFacebookFanPage = async (fbId: string) => {
       logo: $html.find('.uiScaledImageContainer img').attr('src'),
       posts: $html.find('.userContentWrapper').map((_i, el) => {
         const $el = $(el);
+        const utime = +($el.find('[data-utime]').attr('data-utime') || 0) * 1000;
         return {
           id: $el.find('.text_exposed_root').attr('id'),
           link: `https://www.facebook.com/${$el.find('a._5pcq').attr('href')}`,
           logo: $el.find('img').attr('src'),
           img: $el.find('.scaledImageFitHeight').attr('src') || $el.find('.scaledImageFitWidth').attr('src') || $el.find('._3chq').attr('src'),
           content: $el.find('[data-testid="post_message"]').html(),
-          utime: +($el.find('[data-utime]').attr('data-utime') || 0) * 1000,
+          utime,
+          formatTime: moment(utime).format('YYYY/MM/DD HH:mm'),
           timestampContent: $el.find('.timestampContent').text(),
         };
       }).get(),
