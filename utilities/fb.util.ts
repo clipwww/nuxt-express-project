@@ -2,6 +2,7 @@ import $ from 'cheerio';
 import axios from 'axios';
 import moment from 'moment';
 
+
 import { ResultVM, ResultCode } from '../view-models/result.vm';
 
 export const crawlerFacebookFanPage = async (fbId: string) => {
@@ -30,7 +31,7 @@ export const crawlerFacebookFanPage = async (fbId: string) => {
           img: $el.find('.scaledImageFitHeight').attr('src') || $el.find('.scaledImageFitWidth').attr('src') || $el.find('._3chq').attr('src'),
           content: $el.find('[data-testid="post_message"]').html(),
           utime,
-          formatTime: moment(utime).format('YYYY/MM/DD HH:mm'),
+          formatTime: moment(utime).utcOffset(480).format('YYYY/MM/DD HH:mm'),
           timestampContent: $el.find('.timestampContent').text(),
         };
       }).get(),
