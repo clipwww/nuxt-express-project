@@ -5,6 +5,7 @@ import movie from './movie';
 import anime1 from './anime1';
 import lk from './lk';
 import fb from './fb';
+import pharmacy from './pharmacy';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/komica', komica)
   .use('/movie', movie)
   .use('/anime1', anime1)
   .use('/lk', lk)
-  .use('/fb', fb);
+  .use('/fb', fb)
+  .use('/pharmacy', pharmacy);
 
 export default router;
