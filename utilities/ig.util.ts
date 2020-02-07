@@ -16,17 +16,17 @@ export const crawlerInstagramFanPage = async (igId: string) => {
     });
     const page = await browser.newPage();
     await page.goto(`https://www.instagram.com/${igId}`);
-    await page.waitFor(3000);
-    try {
-      await page.screenshot({ path: `static/screenshot/${igId}.png` });
-    } catch (err) {
-      console.log(err);
-    }
+    await page.waitFor(1000);
+    // try {
+    //   await page.screenshot({ path: `static/screenshot/${igId}.png` });
+    // } catch (err) {
+    //   console.log(err);
+    // }
     const ret = await page.evaluate(() => {
       const items: IgVM[] = [];
 
       document.querySelectorAll('article a').forEach(el => {
-        const $img = el.querySelector('img');
+        const $img = el.querySelector('img[srcset]');
         const src = $img ? $img.getAttribute('src') || '' : '';
         items.push({
           href: `https://www.instagram.com${el.getAttribute('href')}`,
