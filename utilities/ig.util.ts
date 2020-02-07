@@ -17,7 +17,11 @@ export const crawlerInstagramFanPage = async (igId: string) => {
     const page = await browser.newPage();
     await page.goto(`https://www.instagram.com/${igId}`);
     await page.waitFor(3000);
-    await page.screenshot({ path: '/static/screenshot.png ' });
+    try {
+      await page.screenshot({ path: `static/screenshot/${igId}.png` });
+    } catch (err) {
+      console.log(err);
+    }
     const ret = await page.evaluate(() => {
       const items: IgVM[] = [];
 
