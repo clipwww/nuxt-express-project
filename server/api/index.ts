@@ -6,6 +6,7 @@ import anime1 from './anime1';
 import lk from './lk';
 import fb from './fb';
 import pharmacy from './pharmacy';
+import ig from './ig';
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.use('/komica', komica)
   .use('/anime1', anime1)
   .use('/lk', lk)
   .use('/fb', fb)
-  .use('/pharmacy', pharmacy);
+  .use('/pharmacy', pharmacy)
+  .use('/ig', ig);
 
 export default router;
