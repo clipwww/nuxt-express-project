@@ -8,7 +8,12 @@ const router = Router();
 router.get('/:igId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { igId } = req.params;
 
-  res.result = await crawlerInstagramFanPage(igId);
+  try {
+    res.result = await crawlerInstagramFanPage(igId);
+  } catch (err) {
+    res.status(500).end(err.message);
+    return;
+  }
 
   next();
 });

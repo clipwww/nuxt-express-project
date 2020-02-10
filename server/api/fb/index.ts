@@ -8,7 +8,12 @@ const router = Router();
 router.get('/:fbId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { fbId } = req.params;
 
-  res.result = await crawlerFacebookFanPage(fbId);
+  try {
+    res.result = await crawlerFacebookFanPage(fbId);
+  } catch (err) {
+    res.status(500).end(err.message);
+    return;
+  }
 
   next();
 });
