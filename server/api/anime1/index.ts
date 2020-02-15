@@ -1,22 +1,41 @@
 import { Router, NextFunction } from 'express';
+import m3u8stream from 'm3u8stream';
+import moment from 'moment';
+
 import { NSAnime1 } from '../../../utilities/anime1.util';
 import { RequestExtension, ResponseExtension } from '../../../view-models/extension.vm';
 
-import m3u8stream from 'm3u8stream';
-
+import { microCache } from '../../utils/micro-cache';
 
 const router = Router();
 
 router.get('/list', async (_req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
 
-  res.result = await NSAnime1.getList();
+  const ret = microCache.get('animate1-list')
+  if (ret) {
+    res.result = ret;
+  } else {
+    res.result = await NSAnime1.getList();
+    microCache.set('animate1-list', res.result);
+  }
 
   next();
 });
 
 router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { id } = req.params;
-  res.result = await NSAnime1.getBangumi(id);
+
+  const ret = microCache.get(`animate1-${id}`)
+  if (ret) {
+    res.result = ret;
+  } else {
+    res.result = await NSAnime1.getBangumi(id);
+    // let maxAge = 1000 * 60;
+    // if (moment(res.result[0].datePublished).add(1, 'year').isBefore()) {
+    //   maxAge = 1000 * 60 * 60 * 24 * 30;
+    // }
+    microCache.set(`animate1-${id}`, res.result);
+  }
 
   next();
 });

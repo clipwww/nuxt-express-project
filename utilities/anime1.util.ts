@@ -14,6 +14,7 @@ export namespace NSAnime1 {
   export interface ListData {
     id: string;
     name: string;
+    description?: string;
   }
 
   export interface BangumiData {
@@ -22,6 +23,8 @@ export namespace NSAnime1 {
     type: 'mp4' | 'm3u8';
     m3u8Url?: string;
     mp4Url?: string;
+    iframeSrc?: string;
+    datePublished?: string;
   }
 
   export const getList = async (): Promise<ResultListGenericVM<ListData>> => {
@@ -33,11 +36,13 @@ export namespace NSAnime1 {
       const $html = $(htmlString);
 
       const names = $html.find('#tablepress-1 .column-1 a');
-      result.items = names.map((_i, el) => {
+      const descriptions = $html.find('#tablepress-1 td.column-2');
+      result.items = names.map((i, el) => {
         const $el = $(el);
         return {
           id: ($el.attr('href') || '').replace('/?cat=', ''),
           name: $el.text(),
+          description: $(descriptions[i]).text()
         } as ListData
       }).get();
 
@@ -52,13 +57,24 @@ export namespace NSAnime1 {
     result.items = [];
 
     try {
-      const { data: htmlString } = await axios.get<string>(`${config.domain}/?cat=${id}`, {
+      result.items.push(...await getAnimate(`${config.domain}/?cat=${id}`));
+
+      return result.setResultValue(true, ResultCode.success);
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
+  }
+
+  export const getAnimate = async (url: string): Promise<BangumiData[]> => {
+    try {
+      const { data: htmlString } = await axios.get<string>(url, {
         headers: {
           Cookie: "videopassword=1"
         },
         withCredentials: true
       });
 
+      const items: BangumiData[] = [];
       const $html = $(htmlString);
 
       const bangumis = $html.find('[id*="post-"]');
@@ -71,18 +87,24 @@ export namespace NSAnime1 {
 
 
 
-        result.items.push({
+        items.push({
           id: ($el.attr('id') || '').replace('post-', ''),
           name: $el.find('.entry-title').text(),
           type,
           m3u8Url: type === 'm3u8' ? await getM3u8Url(iframeSrc as string) : null,
-          mp4Url: type === 'mp4' ? iframeSrc : null,
+          mp4Url: type === 'mp4' ? await getMp4Url(iframeSrc as string) : null,
+          iframeSrc,
+          datePublished: $el.find('.published').attr('datetime') || null,
         } as BangumiData)
       }
 
-      return result.setResultValue(true, ResultCode.success);
+      if ($html.has('.nav-previous')) {
+        items.push(...await getAnimate($html.find('.nav-previous a').attr('href') as string))
+      }
+
+      return items;
     } catch (err) {
-      return result.setResultValue(false, ResultCode.error, err.message);
+      return [];
     }
   }
 
@@ -94,7 +116,7 @@ export namespace NSAnime1 {
 
       const $html = $(htmlString);
       const m3u8Url = $html.find('source').attr('src')
-      console.log(m3u8Url);
+
       return m3u8Url || '';
     } catch (err) {
       return '';
@@ -111,14 +133,18 @@ export namespace NSAnime1 {
     const d = matchArr ? matchArr[0].replace('\'', '') : '';
 
     try {
-      const { data: ret } = await axios.post('https://v.anime1.me/api', d, {
+      const { data: ret } = await axios.post('https://v.anime1.me/apiv2', d, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         }
       })
 
-      return ret.l;
+      if (!ret.success) {
+        return '';
+      }
+
+      return `https:${ret.sources[0].file}`;
     } catch (err) {
       console.log(err.response.data);
       return '';
