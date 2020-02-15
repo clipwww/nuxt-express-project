@@ -6,6 +6,7 @@ import { NSAnime1 } from '../../../utilities/anime1.util';
 import { RequestExtension, ResponseExtension } from '../../../view-models/extension.vm';
 
 import { microCache } from '../../utils/micro-cache';
+import { ResultListGenericVM } from '../../../view-models/result.vm';
 
 const router = Router();
 
@@ -30,11 +31,24 @@ router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension,
     res.result = ret;
   } else {
     res.result = await NSAnime1.getBangumi(id);
-    // let maxAge = 1000 * 60;
-    // if (moment(res.result[0].datePublished).add(1, 'year').isBefore()) {
-    //   maxAge = 1000 * 60 * 60 * 24 * 30;
-    // }
-    microCache.set(`animate1-${id}`, res.result);
+    let maxAge = 1000 * 60;
+    try {
+      const date = (res.result as ResultListGenericVM<any>).items[0].datePublished;
+      switch (true) {
+        case moment(date).add(2, 'week').isBefore():
+          maxAge = 1000 * 60 * 60 * 24 * 7;
+          break;
+        case moment(date).add(1, 'month').isBefore():
+          maxAge = 1000 * 60 * 60 * 24 * 30;
+          break;
+        case moment(date).add(1, 'year').isBefore():
+          maxAge = 1000 * 60 * 60 * 24 * 365;
+          break;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    microCache.set(`animate1-${id}`, res.result, maxAge);
   }
 
   next();

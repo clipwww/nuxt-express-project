@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ResultVM } from './result.vm';
+import { ResultVM, ResultListGenericVM, ResultGenericVM } from './result.vm';
 
 export interface RequestExtension extends Request {
   query: {
@@ -14,6 +14,6 @@ export interface RequestExtension extends Request {
 }
 
 export interface ResponseExtension extends Response {
-  result?: ResultVM;
+  result?: ResultVM | ResultGenericVM<any> | ResultListGenericVM<any>;
 
 }
