@@ -91,8 +91,6 @@ export namespace NSAnime1 {
           id: ($el.attr('id') || '').replace('post-', ''),
           name: $el.find('.entry-title').text(),
           type,
-          m3u8Url: type === 'm3u8' ? await getM3u8Url(iframeSrc as string) : null,
-          mp4Url: type === 'mp4' ? await getMp4Url(iframeSrc as string) : null,
           iframeSrc,
           datePublished: $el.find('.published').attr('datetime') || null,
         } as BangumiData)

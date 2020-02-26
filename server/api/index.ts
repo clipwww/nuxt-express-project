@@ -7,11 +7,14 @@ import lk from './lk';
 import fb from './fb';
 import pharmacy from './pharmacy';
 import ig from './ig';
+// import v2 from './v2';
 
 const router = Router();
 
 // Add Routes
-router.use('/komica', komica)
+router
+  // .use('/v2', v2)
+  .use('/komica', komica)
   .use('/niconico', niconico)
   .use('/movie', movie)
   .use('/anime1', anime1)

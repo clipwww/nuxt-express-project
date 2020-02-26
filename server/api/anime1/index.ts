@@ -4,21 +4,36 @@ import moment from 'moment';
 
 import { NSAnime1 } from '../../../utilities/anime1.util';
 import { RequestExtension, ResponseExtension } from '../../../view-models/extension.vm';
-
-import { microCache } from '../../utils/micro-cache';
-import { ResultListGenericVM } from '../../../view-models/result.vm';
+import { ResultListGenericVM, ResultCode } from '../../../view-models/result.vm';
+import { fireStore } from '../../db/firebase.db';
 
 const router = Router();
 
 router.get('/list', async (_req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const listRef = fireStore.collection('bangumi').doc('list')
+  const listData = await listRef.get().then(doc => doc.data());
+  if (listData && moment().isBefore(listData.dateExpired)) {
+    const result = new ResultListGenericVM<NSAnime1.BangumiData>();
+    result.items = listData.items;
+    result.setResultValue(true, ResultCode.notModified)
 
-  const ret = microCache.get('animate1-list')
-  if (ret) {
-    res.result = ret;
-  } else {
-    res.result = await NSAnime1.getList();
-    microCache.set('animate1-list', res.result);
+    res.result = result;
+    next();
+    return;
   }
+
+  res.result = await NSAnime1.getList();
+  if (!res.result.success) {
+    next();
+    return;
+  }
+
+  try {
+    listRef.set({
+      items: (res.result as ResultListGenericVM<NSAnime1.ListData>).items,
+      dateExpired: moment().add(1, 'minute').toISOString()
+    }, { merge: true });
+  } catch (err) { console.log(err) }
 
   next();
 });
@@ -26,29 +41,52 @@ router.get('/list', async (_req: RequestExtension, res: ResponseExtension, next:
 router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { id } = req.params;
 
-  const ret = microCache.get(`animate1-${id}`)
-  if (ret) {
-    res.result = ret;
-  } else {
-    res.result = await NSAnime1.getBangumi(id);
-    let maxAge = 1000 * 60;
-    try {
-      const date = (res.result as ResultListGenericVM<any>).items[0].datePublished;
-      switch (true) {
-        case moment(date).add(2, 'week').isBefore():
-          maxAge = 1000 * 60 * 60 * 24 * 7;
-          break;
-        case moment(date).add(1, 'month').isBefore():
-          maxAge = 1000 * 60 * 60 * 24 * 30;
-          break;
-        case moment(date).add(1, 'year').isBefore():
-          maxAge = 1000 * 60 * 60 * 24 * 365;
-          break;
-      }
-    } catch (err) {
-      console.log(err);
+  const bangumiRef = fireStore.collection('bangumi').doc(id)
+  const bangumiData = await bangumiRef.get().then(doc => doc.data());
+
+  if (bangumiData && moment().isBefore(bangumiData.dateExpired)) {
+    const result = new ResultListGenericVM<NSAnime1.BangumiData>();
+    result.items = bangumiData.items;
+    result.setResultValue(true, ResultCode.notModified)
+
+    res.result = result;
+    next();
+    return;
+  }
+
+  res.result = await NSAnime1.getBangumi(id);
+
+  if (!res.result.success) {
+    next();
+    return;
+  }
+
+  try {
+    let minute = 1;
+    const items = (res.result as ResultListGenericVM<NSAnime1.BangumiData>).items;
+    const datePublished = items[0].datePublished;
+
+    switch (true) {
+      case moment(datePublished).add(1, 'year').isBefore():
+        minute = 60 * 24 * 365;
+        break;
+      case moment(datePublished).add(1, 'month').isBefore():
+        minute = 60 * 24 * 30;
+        break;
+      case moment(datePublished).add(2, 'week').isBefore():
+        minute = 60 * 24 * 7;
+        break;
+      case moment(datePublished).isSame(moment(), 'day'):
+        minute = 60 * 24;
+        break;
     }
-    microCache.set(`animate1-${id}`, res.result, maxAge);
+    bangumiRef.set({
+      id,
+      items,
+      dateExpired: moment().add(minute, 'minute').toISOString()
+    }, { merge: true });
+  } catch (err) {
+    console.log(err);
   }
 
   next();
@@ -57,7 +95,9 @@ router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension,
 router.get('/download/m3u8', async (req: RequestExtension, res: ResponseExtension) => {
   const { url, name } = req.query;
 
-  const stream = m3u8stream(url as string);
+  const m3u8Url = await NSAnime1.getM3u8Url(url as string);
+  console.log('[m3u8Url]', m3u8Url);
+  const stream = m3u8stream(m3u8Url);
 
   stream.on('progress', (segment, totalSegments, downloaded) => {
     console.log(
@@ -84,5 +124,6 @@ router.get('/download/mp4', async (req: RequestExtension, res: ResponseExtension
 
   res.redirect(mp4Url)
 });
+
 
 export default router;

@@ -1,5 +1,6 @@
 export enum ResultCode {
   success = '200',
+  notModified = '304',
   error = '500'
 }
 
