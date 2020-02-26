@@ -57,7 +57,12 @@ export namespace NSAnime1 {
     result.items = [];
 
     try {
-      result.items.push(...await getAnimate(`${config.domain}/?cat=${id}`));
+      const { title, items } = await getAnimate(`${config.domain}/?cat=${id}`);
+      result.items = items;
+      result.item = {
+        id,
+        title,
+      }
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
@@ -65,7 +70,7 @@ export namespace NSAnime1 {
     }
   }
 
-  export const getAnimate = async (url: string): Promise<BangumiData[]> => {
+  export const getAnimate = async (url: string): Promise<{ title: string, items: BangumiData[] }> => {
     try {
       const { data: htmlString } = await axios.get<string>(url, {
         headers: {
@@ -74,9 +79,10 @@ export namespace NSAnime1 {
         withCredentials: true
       });
 
-      const items: BangumiData[] = [];
+      const bangumiItems: BangumiData[] = [];
       const $html = $(htmlString);
 
+      const title = $html.find('.page-title').length ? $html.find('.page-title').text() : '';
       const bangumis = $html.find('[id*="post-"]');
 
       for (let i = 0; i < bangumis.length; i++) {
@@ -87,7 +93,7 @@ export namespace NSAnime1 {
 
 
 
-        items.push({
+        bangumiItems.push({
           id: ($el.attr('id') || '').replace('post-', ''),
           name: $el.find('.entry-title').text(),
           type,
@@ -96,13 +102,25 @@ export namespace NSAnime1 {
         } as BangumiData)
       }
 
+
       if ($html.has('.nav-previous')) {
-        items.push(...await getAnimate($html.find('.nav-previous a').attr('href') as string))
+        const prevUrl = $html.find('.nav-previous a').attr('href') as string;
+        if (prevUrl) {
+          const { items } = await getAnimate(prevUrl)
+          bangumiItems.push(...items)
+        }
       }
 
-      return items;
+      return {
+        title,
+        items: bangumiItems
+      };
     } catch (err) {
-      return [];
+      console.log(err);
+      return {
+        title: '',
+        items: [],
+      };
     }
   }
 

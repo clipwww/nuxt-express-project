@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+const result = dotenv.config();
+const env = result.parsed;
+console.log(env);
+
 import server from './server';
 
 export default {

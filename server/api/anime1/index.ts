@@ -47,6 +47,10 @@ router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension,
   if (bangumiData && moment().isBefore(bangumiData.dateExpired)) {
     const result = new ResultListGenericVM<NSAnime1.BangumiData>();
     result.items = bangumiData.items;
+    result.item = {
+      id,
+      title: bangumiData.title,
+    }
     result.setResultValue(true, ResultCode.notModified)
 
     res.result = result;
@@ -63,6 +67,7 @@ router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension,
 
   try {
     let minute = 1;
+    const item = (res.result as ResultListGenericVM<any>).item;
     const items = (res.result as ResultListGenericVM<NSAnime1.BangumiData>).items;
     const datePublished = items[0].datePublished;
 
@@ -83,6 +88,7 @@ router.get('/bangumi/:id', async (req: RequestExtension, res: ResponseExtension,
     bangumiRef.set({
       id,
       items,
+      title: item.title,
       dateExpired: moment().add(minute, 'minute').toISOString()
     }, { merge: true });
   } catch (err) {
