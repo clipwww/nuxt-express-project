@@ -34,4 +34,13 @@ router.get('/times/:movieId/:cityId', async (req: RequestExtension, res: Respons
   next();
 });
 
+router.get('/times/:theaterId/:cityId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { theaterId, cityId } = req.params;
+  const { date } = req.query;
+
+  res.result = await NSMovie.getTheaterTimes(theaterId, cityId, date as string);
+
+  next();
+});
+
 export default router;

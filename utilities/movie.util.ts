@@ -38,6 +38,21 @@ export namespace NSMovie {
     items!: Theater[];
   }
 
+  interface TheaterMovie {
+    id: string;
+    title: string;
+    image: string;
+    versions: Array<{
+      name: string;
+      times: string[];
+    }>;
+  }
+
+  export class TheaterTimesResult extends ResultVM {
+    item!: any;
+    items!: Array<TheaterMovie>;
+  }
+
   export async function getMovieList(): Promise<ResultListGenericVM<{ id: string, name: string }>> {
     const result = new ResultListGenericVM<{ id: string, name: string }>();
 
@@ -165,6 +180,73 @@ export namespace NSMovie {
           })
         };
       });
+
+      return result.setResultValue(true, ResultCode.success);
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
+  }
+
+  export async function getTheaterTimes(theaterId: string, cityId: string, date: string): Promise<MovieTimesResult> {
+    const result = new TheaterTimesResult();
+
+    try {
+      const dateString = moment(date).isSame(moment(), 'day') ? '' : moment(date).format('YYYYMMDD');
+      const { data: htmlString } = await axios.get(`${config.getUrl('showtime')}/${theaterId}/${cityId}/${dateString}`);
+
+      const $el = $(htmlString);
+
+      const ldJson = JSON.parse($el.find('[type=\'application/ld+json\']').html() || '{}');
+
+      result.item = {
+        id: theaterId,
+        name: (ldJson || {}).name || '',
+        url: (ldJson || {}).url || '',
+        address: (ldJson || {}).address || '',
+        geo: (ldJson || {}).geo,
+        telephone: (ldJson || {}).telephone || '',
+        openingHours: (ldJson || {}).openingHours || '',
+      };
+
+      const $movieList = $el.find('#theaterShowtimeBlock ul[id]');
+
+      const movies: TheaterMovie[] = $movieList.map((_i, el) => {
+        const $el = $(el);
+        const $title = $el.find('.filmTitle a');
+        const $version = $el.find('.filmVersion').parent('ul');
+
+        return {
+          id: ($title.attr('href') || '//').split('/')[2],
+          title: $title.text(),
+          image: $el.find('img[width]').attr('src'),
+          versions: $version.map((i, vel) => {
+            const $vel = $(vel);
+
+            return {
+              name: $vel.find('.filmVersion').text(),
+              times: $vel.find('li:not(.filmVersion, .theaterElse)')
+                .map((i, tel) => $(tel).text().replace('☆訂票', '').trim()).get()
+            }
+          }).get()
+        }
+      }).get();
+
+      const newMovies: TheaterMovie[] = [];
+      movies.forEach(item => {
+        const movie = newMovies.find(o => o.id === item.id);
+        if (!!movie) {
+          movie.versions = [
+            ...movie.versions,
+            ...item.versions,
+          ]
+        } else {
+          newMovies.push(item);
+        }
+      })
+
+      result.items = newMovies;
+
+
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
