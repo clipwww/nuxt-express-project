@@ -30,7 +30,11 @@ export class MovieSVC extends BaseSVC {
    * @param {string} cityId
    */
   async getTimes(movieId, cityId) {
-    const ret = await this.axiosInstance.get<NSMovie.MovieTimesResult>(`${this.baseURL}/times/${movieId}/${cityId}`);
+    const ret = await this.axiosInstance.get<NSMovie.MovieTimesResult>(`${this.baseURL}/times/${movieId}`, {
+      params: {
+        cityId,
+      }
+    });
     return ret.data;
   }
 }

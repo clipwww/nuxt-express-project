@@ -18,27 +18,28 @@ router.get('/list', async (_req: RequestExtension, res: ResponseExtension, next:
   next();
 });
 
-router.get('/theater/:cityId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
-  const { cityId } = req.params;
+router.get('/theater', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { cityId } = req.query;
 
-  res.result = await NSMovie.getTheaterList(cityId);
-
-  next();
-});
-
-router.get('/times/:movieId/:cityId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
-  const { movieId, cityId } = req.params;
-
-  res.result = await NSMovie.getMovieTimes(movieId, cityId);
+  res.result = await NSMovie.getTheaterList(cityId as string);
 
   next();
 });
 
-router.get('/times/:theaterId/:cityId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
-  const { theaterId, cityId } = req.params;
-  const { date } = req.query;
+router.get('/times/:movieId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { movieId } = req.params;
+  const { cityId } = req.query;
 
-  res.result = await NSMovie.getTheaterTimes(theaterId, cityId, date as string);
+  res.result = await NSMovie.getMovieTimes(movieId, cityId as string);
+
+  next();
+});
+
+router.get('/theater/:theaterId', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  const { theaterId } = req.params;
+  const { date, cityId } = req.query;
+
+  res.result = await NSMovie.getTheaterTimes(theaterId, cityId as string, date as string);
 
   next();
 });
