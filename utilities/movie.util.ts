@@ -213,7 +213,7 @@ export namespace NSMovie {
       const movies: TheaterMovie[] = $movieList.map((_i, el) => {
         const $el = $(el);
         const $title = $el.find('.filmTitle a');
-        const $version = $el.find('.filmVersion').parent('ul');
+        const $version = $el.find('ul:nth-child(2)');
 
         return {
           id: ($title.attr('href') || '//').split('/')[2],
