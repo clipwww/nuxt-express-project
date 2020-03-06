@@ -14,6 +14,13 @@ export namespace NSMovie {
     }
   };
 
+  interface MovieSimpleInfo {
+    id: string,
+    name: string,
+    description: string,
+    cerImg: string
+  }
+
   export interface MovieInfo {
     id: string;
     name: string;
@@ -22,6 +29,7 @@ export namespace NSMovie {
     poster: string;
     currentDate: string;
     releaseDate: string;
+    cerImg: string;
   }
 
   export interface Theater {
@@ -42,6 +50,8 @@ export namespace NSMovie {
     id: string;
     title: string;
     image: string;
+    runtime: string;
+    cerImg: string;
     versions: Array<{
       name: string;
       times: string[];
@@ -53,21 +63,25 @@ export namespace NSMovie {
     items!: Array<TheaterMovie>;
   }
 
-  export async function getMovieList(): Promise<ResultListGenericVM<{ id: string, name: string }>> {
-    const result = new ResultListGenericVM<{ id: string, name: string }>();
+  export async function getMovieList(): Promise<ResultListGenericVM<MovieSimpleInfo>> {
+    const result = new ResultListGenericVM<MovieSimpleInfo>();
 
     try {
-      const { data: htmlString } = await axios.get(config.getUrl('home/quickSelect.html'));
+      const { data: htmlString } = await axios.get(config.getUrl('movie/now'));
 
       const $el = $(htmlString);
 
-      result.items = $el.find('select[name=select2] option').filter((_i, el) => {
-        return !!el.attribs.value;
-      }).map((_i, el) => {
-        const valueArr = el.attribs.value.split('/')
+      result.items = $el.find('.filmListPA li').map((_i, el) => {
+        const $li = $(el);
+        const $a = $li.find('a');
+        const $runtime = $li.find('.runtime');
+
+        const valueArr = ($a.attr('href') || '/').split('/')
         return {
           id: valueArr[2],
-          name: $(el).text(),
+          name: $a.text(),
+          description: $runtime.text(),
+          cerImg: config.getUrl($runtime.find('img').attr('src'))
         };
       }).get();
 
@@ -86,14 +100,20 @@ export namespace NSMovie {
 
       const $el = $(htmlString);
 
-      result.items = $el.find('select[name=area] option').filter((_i, el) => {
+      const citys: Array<{ id: string, name: string }> = [];
+      $el.find('select[name=area] option').filter((_i, el) => {
         return !!el.attribs.value;
-      }).map((_i, el) => {
-        return {
-          id: el.attribs.value,
-          name: $(el).text().trim(),
-        };
-      }).get();
+      }).each((_i, el) => {
+        const id = el.attribs.value;
+        if (!citys.find(c => c.id === id)) {
+          citys.push({
+            id: el.attribs.value,
+            name: $(el).text().trim(),
+          })
+        }
+      });
+
+      result.items = citys;
 
       return result.setResultValue(true, ResultCode.success);
 
@@ -142,7 +162,8 @@ export namespace NSMovie {
         poster: (ldJson.image || '').trim(),
         description: ldJson.description,
         currentDate: moment().format('YYYY/MM/DD'),
-        releaseDate: (movieInfoArr.find(str => str.includes('上映日期：')) || '').replace(/上映日期：/g, '').trim()
+        releaseDate: (movieInfoArr.find(str => str.includes('上映日期：')) || '').replace(/上映日期：/g, '').trim(),
+        cerImg: config.getUrl($el.find('.runtimeText img').attr('src'))
       };
 
       const tempArr = $el.find('#filmShowtimeBlock > ul').map((_i, el) => {
@@ -214,11 +235,14 @@ export namespace NSMovie {
         const $el = $(el);
         const $title = $el.find('.filmTitle a');
         const $version = $el.find('ul:nth-child(2)');
+        const $info = $el.find('ul:nth-child(1)');
 
         return {
           id: ($title.attr('href') || '//').split('/')[2],
           title: $title.text(),
           image: $el.find('img[width]').attr('src'),
+          runtime: +$info.text().replace(/片長：|分/g, '').trim(),
+          cerImg: config.getUrl($info.find('li:nth-child(2) img').attr('src')),
           versions: $version.map((i, vel) => {
             const $vel = $(vel);
 
