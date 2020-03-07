@@ -145,72 +145,77 @@ export namespace NSMovie {
     }
   }
 
-  export async function getMovieTimes(movieId: string, cityId: string): Promise<MovieTimesResult> {
+  export async function getMovieTimes(movieId: string, cityId?: string): Promise<MovieTimesResult> {
     const result = new MovieTimesResult();
 
     try {
-      const { data: htmlString } = await axios.get(`${config.getUrl('showtime')}/${movieId}/${cityId}/`);
+      const { data: htmlString } = await axios.get(`${config.getUrl('movie')}/${movieId}`);
 
       const $el = $(htmlString);
 
-      const movieInfoArr = $el.find('.runtimeText').text().split(' ');
-      const ldJson = JSON.parse($el.find('[type=\'application/ld+json\']').html() || '{}');
-      const $theaterSelectOptions = $el.find('.theaterSelect option')
+      const $movieInfoLi = $el.find('.runtime');
+      const $theaterSelectOptions = $el.find('[name="FORMS"] option')
 
       result.item = {
         id: movieId,
-        name: (ldJson || '').name,
-        runtime: +(movieInfoArr.find(str => str.includes('片長')) || '0').replace(/片長：|分/g, '').trim(),
-        poster: (ldJson.image || '').trim(),
-        description: ldJson.description,
+        name: $el.find('.filmTitle').text().trim(),
+        runtime: +($movieInfoLi.find('li:nth-child(1)').text() || '').replace(/片長：|分/g, '').trim(),
+        poster: $el.find(".Poster img").attr('src') || '',
+        description: $el.find("#filmTagBlock span").text().trim(),
         currentDate: moment().format('YYYY/MM/DD'),
-        releaseDate: (movieInfoArr.find(str => str.includes('上映日期：')) || '').replace(/上映日期：/g, '').trim(),
-        cerImg: config.getUrl($el.find('.runtimeText img').attr('src')),
+        releaseDate: ($movieInfoLi.find('li:nth-child(2)').text() || '').replace(/上映日期：/g, '').trim(),
+        cerImg: config.getUrl($el.find('.filmTitle img').attr('src')),
         citys: $theaterSelectOptions
           .map((i, el) => {
             const $option = $(el)
             return {
               id: ($option.attr('value') || '').split('/')[3],
-              name: $option.text()
+              name: $option.text().trim()
             }
           }).get().filter((item) => item.id),
       };
 
-      const tempArr = $el.find('#filmShowtimeBlock > ul').map((_i, el) => {
-        const $theater = $(el).find('.theaterTitle');
+      if (cityId) {
+        const { data: htmlString } = await axios.get(`${config.getUrl('showtime')}/${movieId}/${cityId}/`);
+        const $el = $(htmlString);
+        const tempArr = $el.find('#filmShowtimeBlock > ul').map((_i, el) => {
+          const $theater = $(el).find('.theaterTitle');
 
-        return {
-          theaterId: ($theater.find('a').attr('href') || '').split('/')[2],
-          theaterName: $theater.text(),
-          versionName: $(el).find('.filmVersion').text().trim(),
-          time: $(el).find('li').filter((_i, el) => $(el).text().includes('：')).map((_i, el) => $(el).text()).get(),
-        };
-      }).get();
+          return {
+            theaterId: ($theater.find('a').attr('href') || '').split('/')[2],
+            theaterName: $theater.text(),
+            versionName: $(el).find('.filmVersion').text().trim(),
+            time: $(el).find('li').filter((_i, el) => $(el).text().includes('：')).map((_i, el) => $(el).text()).get(),
+          };
+        }).get();
 
-      const tempObject = _groupBy(tempArr, 'theaterId');
+        const tempObject = _groupBy(tempArr, 'theaterId');
 
-      result.items = Object.keys(tempObject).map<Theater>(key => {
-        const versionObj = {};
-        tempObject[key].forEach((obj: { versionName: string, time: string[] }) => {
-          const name = obj.versionName || '一般';
-          if (versionObj[name]) {
-            versionObj[name] = [...versionObj[name], ...obj.time];
-          } else {
-            versionObj[name] = [...obj.time];
-          }
+        result.items = Object.keys(tempObject).map<Theater>(key => {
+          const versionObj = {};
+          tempObject[key].forEach((obj: { versionName: string, time: string[] }) => {
+            const name = obj.versionName || '一般';
+            if (versionObj[name]) {
+              versionObj[name] = [...versionObj[name], ...obj.time];
+            } else {
+              versionObj[name] = [...obj.time];
+            }
+          });
+
+          return {
+            id: key,
+            name: tempObject[key][0].theaterName,
+            versions: Object.keys(versionObj).map(vKey => {
+              return {
+                name: vKey,
+                times: versionObj[vKey]
+              };
+            })
+          };
         });
-
-        return {
-          id: key,
-          name: tempObject[key][0].theaterName,
-          versions: Object.keys(versionObj).map(vKey => {
-            return {
-              name: vKey,
-              times: versionObj[vKey]
-            };
-          })
-        };
-      });
+      } else {
+        result.items = [];
+      }
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
