@@ -152,6 +152,7 @@ export namespace NSMovie {
       const { data: htmlString } = await axios.get(`${config.getUrl('movie')}/${movieId}`);
 
       const $el = $(htmlString);
+      const $h = $.load(htmlString);
 
       const $movieInfoLi = $el.find('.runtime');
       const $theaterSelectOptions = $el.find('[name="FORMS"] option')
@@ -161,7 +162,7 @@ export namespace NSMovie {
         name: $el.find('.filmTitle').text().trim(),
         runtime: +($movieInfoLi.find('li:nth-child(1)').text() || '').replace(/片長：|分/g, '').trim(),
         poster: $el.find(".Poster img").attr('src') || '',
-        description: $el.find("#filmTagBlock span").text().trim(),
+        description: $h('meta[property="og:description"]').attr('content') || '',
         currentDate: moment().format('YYYY/MM/DD'),
         releaseDate: ($movieInfoLi.find('li:nth-child(2)').text() || '').replace(/上映日期：/g, '').trim(),
         cerImg: config.getUrl($el.find('.filmTitle img').attr('src')),
