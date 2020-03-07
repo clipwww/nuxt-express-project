@@ -30,6 +30,7 @@ export namespace NSMovie {
     currentDate: string;
     releaseDate: string;
     cerImg: string;
+    citys: Array<{ id: string, name: string }>
   }
 
   export interface Theater {
@@ -154,6 +155,7 @@ export namespace NSMovie {
 
       const movieInfoArr = $el.find('.runtimeText').text().split(' ');
       const ldJson = JSON.parse($el.find('[type=\'application/ld+json\']').html() || '{}');
+      const $theaterSelectOptions = $el.find('.theaterSelect option')
 
       result.item = {
         id: movieId,
@@ -163,7 +165,15 @@ export namespace NSMovie {
         description: ldJson.description,
         currentDate: moment().format('YYYY/MM/DD'),
         releaseDate: (movieInfoArr.find(str => str.includes('上映日期：')) || '').replace(/上映日期：/g, '').trim(),
-        cerImg: config.getUrl($el.find('.runtimeText img').attr('src'))
+        cerImg: config.getUrl($el.find('.runtimeText img').attr('src')),
+        citys: $theaterSelectOptions
+          .map((i, el) => {
+            const $option = $(el)
+            return {
+              id: ($option.attr('value') || '').split('/')[3],
+              name: $option.text()
+            }
+          }).get().filter((item) => item.id),
       };
 
       const tempArr = $el.find('#filmShowtimeBlock > ul').map((_i, el) => {
