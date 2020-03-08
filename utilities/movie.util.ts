@@ -27,6 +27,7 @@ export namespace NSMovie {
     description: string;
     runtime: number;
     poster: string;
+    trailer: string;
     currentDate: string;
     releaseDate: string;
     cerImg: string;
@@ -93,11 +94,11 @@ export namespace NSMovie {
     }
   }
 
-  export async function getMovieListGroupByDate(): Promise<ResultListGenericVM<MovieSimpleInfo>> {
-    const result = new ResultListGenericVM<MovieSimpleInfo>();
+  export async function getMovieListGroupByDate(type: 'now' | 'next' = 'now') {
+    const result = new ResultListGenericVM<{ date: string, movies: Array<{ id: string, poster: string, name: string }> }>();
 
     try {
-      const { data: htmlString } = await axios.get(config.getUrl('movie/now/0/'));
+      const { data: htmlString } = await axios.get(config.getUrl(`movie/${type}/0/`));
 
       const $hel = $(htmlString);
       const $majorList = $hel.find('.major');
@@ -196,6 +197,7 @@ export namespace NSMovie {
         name: $el.find('.filmTitle').text().trim(),
         runtime: +($movieInfoLi.find('li:nth-child(1)').text() || '').replace(/片長：|分/g, '').trim(),
         poster: $el.find(".Poster img").attr('src') || '',
+        trailer: $el.find('iframe.featured').attr('src') || '',
         description: $h('meta[property="og:description"]').attr('content') || '',
         currentDate: moment().format('YYYY/MM/DD'),
         releaseDate: ($movieInfoLi.find('li:nth-child(2)').text() || '').replace(/上映日期：/g, '').trim(),

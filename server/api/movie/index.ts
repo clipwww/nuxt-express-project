@@ -23,6 +23,12 @@ router.get('/list-group-by-date', async (req: RequestExtension, res: ResponseExt
   next();
 });
 
+router.get('/next', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  res.result = await NSMovie.getMovieListGroupByDate('next')
+
+  next();
+});
+
 router.get('/theater', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   const { cityId } = req.query;
 
