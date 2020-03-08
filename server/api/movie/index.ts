@@ -11,9 +11,14 @@ router.get('/city', async (_req: RequestExtension, res: ResponseExtension, next:
   next();
 });
 
-router.get('/list', async (_req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
-
+router.get('/list', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
   res.result = await NSMovie.getMovieList();
+
+  next();
+});
+
+router.get('/list-group-by-date', async (req: RequestExtension, res: ResponseExtension, next: NextFunction) => {
+  res.result = await NSMovie.getMovieListGroupByDate()
 
   next();
 });

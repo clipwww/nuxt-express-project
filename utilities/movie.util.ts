@@ -93,6 +93,40 @@ export namespace NSMovie {
     }
   }
 
+  export async function getMovieListGroupByDate(): Promise<ResultListGenericVM<MovieSimpleInfo>> {
+    const result = new ResultListGenericVM<MovieSimpleInfo>();
+
+    try {
+      const { data: htmlString } = await axios.get(config.getUrl('movie/now/0/'));
+
+      const $hel = $(htmlString);
+      const $majorList = $hel.find('.major');
+
+
+      result.items = $majorList.map((i, mel) => {
+        const $filmList = $hel.find(`.filmListAll:nth-of-type(${i + 1})`);
+        const $li = $filmList.find('li');
+
+        return {
+          releaseDate: $(mel).text(),
+          movies: $li.map((_i, fel) => {
+            const $fel = $(fel);
+            return {
+              id: ($fel.find('a').attr('href') || '/').split('/')[2],
+              poster: $fel.find('.filmListAllPoster').attr('src'),
+              name: $fel.find('.filmtitle a').text(),
+            }
+          }).get()
+        };
+      }).get();
+
+      return result.setResultValue(true, ResultCode.success);
+
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
+  }
+
   export async function getCityList(): Promise<ResultListGenericVM<{ id: string, name: string }>> {
     const result = new ResultListGenericVM<{ id: string, name: string }>();
 
