@@ -4,6 +4,7 @@ import { groupBy as _groupBy } from 'lodash';
 
 import { ResultCode, ResultListGenericVM, ResultVM } from '../view-models/result.vm';
 import axios from './axios.util';
+import { microCache } from '../server/utils/micro-cache';
 
 export namespace NSMovie {
 
@@ -264,21 +265,35 @@ export namespace NSMovie {
     const result = new TheaterTimesResult();
 
     try {
-      const dateString = moment(date).isSame(moment(), 'day') ? '' : moment(date).format('YYYYMMDD');
+      const isToday = moment(date).isSame(moment(), 'day');
+
+      const dateString = isToday ? '' : moment(date).format('YYYYMMDD');
       const { data: htmlString } = await axios.get(`${config.getUrl('showtime')}/${theaterId}/${cityId}/${dateString}`);
 
       const $el = $(htmlString);
 
-      const ldJson = JSON.parse($el.find('[type=\'application/ld+json\']').html() || '{}');
+      let ldJson: any = microCache.get(`theater-info-${theaterId}`);
+      if (!ldJson) {
+        if (isToday) {
+          ldJson = JSON.parse($el.find('[type=\'application/ld+json\']').html() || '{}');
+        } else {
+          const { data: hs } = await axios.get(`${config.getUrl('showtime')}/${theaterId}/${cityId}/`);
+          ldJson = JSON.parse($(hs).find('[type=\'application/ld+json\']').html() || '{}');
+        }
+
+        if (ldJson && ldJson.name) {
+          microCache.set(`theater-info-${theaterId}`, ldJson, 1000 * 60 * 60 * 24 * 7);
+        }
+      }
 
       result.item = {
         id: theaterId,
-        name: (ldJson || {}).name || '',
-        url: (ldJson || {}).url || '',
-        address: (ldJson || {}).address || '',
-        geo: (ldJson || {}).geo,
-        telephone: (ldJson || {}).telephone || '',
-        openingHours: (ldJson || {}).openingHours || '',
+        name: ldJson.name || '',
+        url: ldJson.url || '',
+        address: ldJson.address || '',
+        geo: ldJson.geo,
+        telephone: ldJson.telephone || '',
+        openingHours: ldJson.openingHours || '',
       };
 
       const $movieList = $el.find('#theaterShowtimeBlock ul[id]');

@@ -14,14 +14,14 @@ export const cacheOption = {
 
 class MicroCache {
 
-  public static getInstance(): LRU.Cache<{}, {}> {
+  public static getInstance(): LRU<{}, {}> {
     if (MicroCache.instance === null) {
       MicroCache.instance = new LRU(cacheOption);
     }
     return MicroCache.instance;
   }
 
-  private static instance: LRU.Cache<{}, {}> = null;
+  private static instance: LRU<{}, {}> | null = null;
 }
 
 export const microCache = MicroCache.getInstance();
