@@ -1,7 +1,7 @@
 import $ from 'cheerio';
 import moment, { Moment } from 'moment';
 
-import { ResultVM, ResultCode } from '../view-models/result.vm';
+import { ResultVM, ResultCode, ResultListGenericVM } from '../view-models/result.vm';
 import axios from './axios.util';
 
 export namespace NSKomica {
@@ -15,8 +15,16 @@ export namespace NSKomica {
   export type boardType = 'live' | 'new';
 
   export class ListResultVM extends ResultVM {
+    item?: {
+      title: string,
+      url: string;
+    };
     items!: PostData[];
     pages!: string[];
+    page?: {
+      index: number;
+      pageAmount: number;
+    }
   }
 
   export class DetailsResultVM extends ResultVM {
@@ -36,6 +44,7 @@ export namespace NSKomica {
     userId: string;
     warnText: string;
     reply: PostData[];
+    url?: string;
   }
 
   const getPostData = ($el: Cheerio): PostData => {
@@ -146,6 +155,66 @@ export namespace NSKomica {
 
       result.items = postDatas;
       result.pages = pages;
+      result.page = {
+        index: +page,
+        pageAmount: pages.length
+      }
+      result.item = {
+        title: $html.find('h1').text(),
+        url: config.getUrl(type)
+      }
+
+      return result.setResultValue(true, ResultCode.success);
+    } catch (err) {
+      return result.setResultValue(false, ResultCode.error, err.message);
+    }
+  };
+
+  export const getKomicaAllPostResult = async (type: boardType | string, page = 1): Promise<ResultListGenericVM<any>> => {
+    const result = new ResultListGenericVM<any>();
+
+    try {
+
+      const { data: htmlString } = await axios.get<string>(config.getUrl(type), {
+        params: {
+          mode: 'module',
+          load: 'mod_threadlist',
+          sort: 'date',
+          page: page - 1,
+        }
+      });
+
+      const $html = $(htmlString);
+      const $tr = $html.find('form table tr:not(:nth-child(1))');
+
+      result.item = {
+        title: $html.find('h1').text(),
+        url: config.getUrl(type) + `?mode=module&load=mod_threadlist&sort=date`,
+      }
+      result.items = $tr.map((i, el) => {
+        const $el = $(el);
+        const label = $el.find('td:nth-child(6)').text();
+        const dateTime = label.slice(0, label.indexOf('ID') - 1) || '';
+
+        const date = dateTime.slice(0, dateTime.indexOf('('));
+        const time = dateTime.slice(dateTime.indexOf(')') + 1);
+        const dateCreated = moment(`20${date.replace(/\//g, '-')}T${time}`);
+
+        return {
+          id: $el.find('input').attr('name'),
+          title: $el.find('a').text(),
+          replyCount: $el.find('td:nth-child(5)').text(),
+          dateTime,
+          dateCreated,
+        }
+      }).get();
+
+      const $next = $html.find('#page_switch table tr td:last-child a');
+      if ($next.length) {
+        page += 1;
+        const ret = await getKomicaAllPostResult(type, page);
+        result.items = result.items.concat(ret.items);
+      }
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
@@ -165,7 +234,13 @@ export namespace NSKomica {
       });
 
       const $html = $(htmlString);
-      const postData: PostData = getPostData($html.find('.threadpost'));
+      const $threadpost = $html.find('.threadpost');
+
+      if (!$threadpost.length) {
+        throw Error('該当記事がみつかりません');
+      }
+
+      const postData: PostData = getPostData($threadpost);
 
       $html.find('.reply').each((_i, rEl) => {
         const $rEl = $(rEl);
@@ -174,6 +249,7 @@ export namespace NSKomica {
       });
 
       result.item = postData;
+      result.item['url'] = config.getUrl(type) + `?res=${resId}`
 
       return result.setResultValue(true, ResultCode.success);
     } catch (err) {
