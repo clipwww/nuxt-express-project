@@ -7,7 +7,7 @@ import lk from './lk';
 import fb from './fb';
 import pharmacy from './pharmacy';
 import ig from './ig';
-// import v2 from './v2';
+import himawari from './himawari';
 
 const router = Router();
 
@@ -21,6 +21,7 @@ router
   .use('/lk', lk)
   .use('/fb', fb)
   .use('/pharmacy', pharmacy)
-  .use('/ig', ig);
+  .use('/ig', ig)
+  .use('/himawari', himawari);
 
 export default router;
