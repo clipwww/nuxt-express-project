@@ -35,11 +35,14 @@ export const crawlerHimawariList = async ({ sort = 'today_view_cnt', keyword = '
     };
 
     result.items = items ? items.map(item => {
+      const $d = $.load(item.description);
+
       return {
         id: item.link.replace(BASE_URL, ''),
         title: item.title,
         link: item.link,
-        description: item.description,
+        image: $d('img').attr('src'),
+        description: $d('.riRssContributor').html(),
         datePublish: moment(item.pubDate).toISOString(),
       }
     }) : []
