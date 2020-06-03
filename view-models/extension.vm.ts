@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { ResultVM, ResultListGenericVM, ResultGenericVM } from './result.vm';
 
 export interface RequestExtension extends Request {
+  params: {
+    [key: string]: string
+  };
   query: {
     p: number,
     resId: string

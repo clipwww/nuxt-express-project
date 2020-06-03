@@ -16,6 +16,7 @@ app.use(expressWinstonLogger);
 // Import API Routes
 app.use('/api', api, responseEndMiddleware);
 
+// @ts-ignore
 app.use(expressWinstonErrorLogger);
 
 export default app;

@@ -33,8 +33,8 @@ export default class DefaultLayout extends Vue {
   drawer: boolean = false;
 
   get isDetails(): boolean {
-    const { name = '', params = {} } = this.$route;
-    return name.includes('-id') && !!params.id;
+    const { name, params = {} } = this.$route;
+    return (name || '').includes('-id') || !!params.id;
   }
 }
 </script>
